@@ -24,17 +24,31 @@ const sellVehicleController = require("../controllers/SellVehicle");
 
 const router = express.Router();
 
-// Set up storage for uploaded files
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Save files in 'uploads' folder
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); // Rename file
-  },
-});
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
+const cloudinary = require("../utils/cloudinary");
+const upload = multer({ dest: "uploads/" }); // Temporary storage
 
-const upload = multer({ storage: storage });
+router.post("/upload", authMiddleware, upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: "No file uploaded" });
+  }
+
+  try {
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "your-wheels", // optional Cloudinary folder
+    });
+
+    fs.unlinkSync(req.file.path); // delete temp file
+
+    res.json({ success: true, imageUrl: result.secure_url }); // Cloudinary URL
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(500).json({ success: false, message: "Upload failed" });
+  }
+});
 
 /* ==============================
    SELLER AUTHENTICATION ROUTES
@@ -46,14 +60,7 @@ router.get("/seller/:id", sellerId);
 /* ==============================
    IMAGE UPLOAD ROUTE
    ============================== */
-router.post("/upload", authMiddleware, upload.single("file"), (req, res) => {
-  if (!req.file) {
-    return res
-      .status(400)
-      .json({ success: false, message: "No file uploaded" });
-  }
-  res.json({ success: true, imageUrl: `/uploads/${req.file.filename}` });
-});
+
 
 /* ==============================
    RENTAL VEHICLE MANAGEMENT ROUTES
