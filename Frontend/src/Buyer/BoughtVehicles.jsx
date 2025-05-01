@@ -22,7 +22,7 @@ function BoughtVehicles() {
         }
 
         // ✅ Update API endpoint to fetch sold vehicles
-        const response = await fetch(`http://localhost:3000/buy/buyer/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/buy/buyer/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
