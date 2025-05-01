@@ -367,7 +367,7 @@ function SellerSignup() {
         type="button" 
         className="social-btn"
                 // onClick={handleGoogleSignIn}
-                onClick={() => window.location.href = "http://your-wheels-an-automobile-e-commerce.onrender.com/auth/seller/google"}
+                onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/seller/google`}
       >
         <img src="https://www.google.com/favicon.ico" alt="Google" width="20" height="20" />
         Google

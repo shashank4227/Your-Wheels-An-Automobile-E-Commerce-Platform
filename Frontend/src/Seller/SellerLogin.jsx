@@ -171,8 +171,7 @@ function SellerLogin() {
                 type="button"
                 className="social-btn"
                 onClick={() =>
-                  (window.location.href =
-                    "http://your-wheels-an-automobile-e-commerce.onrender.com/auth/seller/google")
+                  (window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/seller/google`)
                 }
               >
                 <img

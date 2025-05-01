@@ -140,7 +140,7 @@ function BuyerLogin() {
               <button 
                 type="button" 
                 className="social-btn" 
-                onClick={() => window.location.href = "http://your-wheels-an-automobile-e-commerce.onrender.com/auth/buyer/google"}
+                onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/buyer/google`}
               >
                 <img src="https://www.google.com/favicon.ico" alt="Google" width="20" height="20" />
                 Google
