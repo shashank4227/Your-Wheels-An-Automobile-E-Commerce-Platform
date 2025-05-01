@@ -349,8 +349,8 @@ function SellerSignup() {
 </div>
 
       {errorMessage && <p className="error-message">{errorMessage}</p>}
-{emailSent && !emailVerified && <p className="success-message">OTP sent successfully!</p>}
-{emailVerified && <p className="success-message">OTP verified successfully! 🎉</p>}
+{emailSent && !emailVerified && <p style={{color:"blueviolet"}}>OTP sent successfully!</p>}
+{emailVerified && <p style={{color:"blueviolet"}}>OTP verified successfully! 🎉</p>}
 
 
 <br />

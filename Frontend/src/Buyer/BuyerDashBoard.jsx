@@ -70,7 +70,7 @@ function DashBoard() {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Unauthorized: No token available");
 
-        const response = await axios.get(`http://localhost:3000/buyer/${id}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/buyer/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
