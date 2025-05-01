@@ -11,7 +11,7 @@ const AdminManageUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://localhost:3000/get-users");
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/get-users`);
       if (!response.ok) throw new Error("Failed to fetch users");
 
       const data = await response.json();
@@ -38,7 +38,7 @@ const AdminManageUsers = () => {
 
   const handleDelete = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:3000/delete-user/${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/delete-user/${userId}`, {
         method: "DELETE",
       });
 

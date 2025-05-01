@@ -23,7 +23,7 @@ function AdminVehicleForRent() {
           return;
         }
 
-        const response = await fetch(`http://localhost:3000/vehicles/admin`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/vehicles/admin`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -74,7 +74,7 @@ function AdminVehicleForRent() {
                   style={{ backgroundColor: "black" }}
                 >
                   <img
-                    src={`http://localhost:3000${vehicle.imageUrl}`}
+                    src={`${import.meta.env.VITE_BACKEND_URL}/${vehicle.imageUrl}`}
                     alt={vehicle.name}
                     className="vehicle-image"
                   />

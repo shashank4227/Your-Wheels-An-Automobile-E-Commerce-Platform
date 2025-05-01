@@ -102,7 +102,7 @@ function DashBoard() {
     const fetchStats = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/buyer-stats/${id}`
+          `${import.meta.env.VITE_BACKEND_URL}/buyer-stats/${id}`
         );
         setStats(response.data);
       } catch (error) {

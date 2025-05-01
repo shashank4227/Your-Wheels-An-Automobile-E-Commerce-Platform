@@ -21,13 +21,13 @@ function ConfirmBuy() {
   useEffect(() => {
     if (vehicleId) {
       // ✅ Fetch vehicle details from backend
-      fetch(`http://localhost:3000/sell/${vehicleId}`)
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/sell/${vehicleId}`)
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            setVehicleData(data.vehicle);
+        setVehicleData(data.vehicle);
           } else {
-            throw new Error(data.message || "Failed to fetch vehicle details");
+        throw new Error(data.message || "Failed to fetch vehicle details");
           }
         })
         .catch((error) =>
@@ -40,7 +40,7 @@ function ConfirmBuy() {
     if (!vehicleData) return;
 
     try {
-      const response = await fetch("http://localhost:3000/create-transaction", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/create-transaction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

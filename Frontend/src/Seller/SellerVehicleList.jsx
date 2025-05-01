@@ -23,7 +23,7 @@ function SellerVehicleList() {
           return;
         }
 
-        const response = await fetch(`http://localhost:3000/vehicles/seller/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/vehicles/seller/${id}`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -55,7 +55,7 @@ function SellerVehicleList() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`http://localhost:3000/rent-vehicles/${vehicleId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rent-vehicles/${vehicleId}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,

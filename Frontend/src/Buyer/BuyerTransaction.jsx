@@ -18,7 +18,7 @@ function BuyerTransaction() {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/transactions/${id}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/transactions/${id}`);
         console.log('Transactions:', response.data);
         
         if (Array.isArray(response.data)) {

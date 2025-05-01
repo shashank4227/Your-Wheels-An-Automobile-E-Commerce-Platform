@@ -20,7 +20,7 @@ function Membership() {
     // ✅ Fetch membership status from the backend
     const fetchMembership = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/buyer/${id}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/buyer/${id}`);
         console.log('Membership:', response.data);
 
         if (response.data?.isMember) {

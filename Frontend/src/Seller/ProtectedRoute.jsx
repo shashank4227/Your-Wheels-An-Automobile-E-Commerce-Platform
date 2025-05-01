@@ -20,7 +20,7 @@ function ProtectedSellerRoute({ children, requiredAccess }) {
 
         setId(sellerId);
 
-        const response = await axios.get(`http://localhost:3000/seller/${sellerId}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/seller/${sellerId}`);
         const { membershipType } = response.data; // Fetch membership type from database
 
         setMembershipType(membershipType);

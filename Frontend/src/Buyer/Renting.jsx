@@ -37,7 +37,7 @@ function Renting() {
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/rent-vehicles");
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/rent-vehicles`);
         setVehicles(response.data);
       } catch (err) {
         console.error("Error fetching vehicles:", err);

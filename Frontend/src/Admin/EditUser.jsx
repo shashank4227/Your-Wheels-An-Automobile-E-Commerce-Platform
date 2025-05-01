@@ -19,7 +19,7 @@ const EditUser = () => {
     const fetchUser = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/get-user/${userId}`
+          `${import.meta.env.VITE_BACKEND_URL}/get-user/${userId}`
         );
         const data = await response.json();
         if (response.ok) {

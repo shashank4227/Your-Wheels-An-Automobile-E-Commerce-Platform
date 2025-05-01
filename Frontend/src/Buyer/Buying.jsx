@@ -25,15 +25,15 @@ function Buying() {
   }, [location]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/available-vehicles")
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/available-vehicles`)
       .then((response) => response.json())
       .then((data) => {
-        console.log("Fetched Vehicles:", data.vehicles); // 🔍 Debugging step
-        if (data.success) {
-          setVehicles(data.vehicles);
-        } else {
-          throw new Error(data.message || "Failed to fetch vehicles");
-        }
+      console.log("Fetched Vehicles:", data.vehicles); // 🔍 Debugging step
+      if (data.success) {
+        setVehicles(data.vehicles);
+      } else {
+        throw new Error(data.message || "Failed to fetch vehicles");
+      }
       })
       .catch((error) => console.error("Error fetching vehicles:", error));
   }, []);
@@ -159,7 +159,7 @@ function Buying() {
               {filteredVehicles.map((vehicle) => (
                 <div key={vehicle._id} className="vehicle-card">
                   <img
-                    src={`http://localhost:3000${vehicle.imageUrl}`}
+                    src={`${import.meta.env.VITE_BACKEND_URL}${vehicle.imageUrl}`}
                     alt={vehicle.name}
                     onError={(e) =>
                       (e.target.src = "https://via.placeholder.com/150")

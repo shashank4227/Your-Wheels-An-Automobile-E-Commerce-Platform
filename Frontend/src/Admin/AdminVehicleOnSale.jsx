@@ -22,7 +22,7 @@ function AdminVehicleOnSale() {
         }
 
         const response = await fetch(
-          `http://localhost:3000/admin-vehicle-on-sale`,
+          `${import.meta.env.VITE_BACKEND_URL}/admin-vehicle-on-sale`,
           {
             method: "GET",
             headers: {
@@ -80,7 +80,7 @@ function AdminVehicleOnSale() {
                       src={
                         vehicle.imageUrl.startsWith("http")
                           ? vehicle.imageUrl
-                          : `http://localhost:3000${vehicle.imageUrl}`
+                          : `${import.meta.env.VITE_BACKEND_URL}/${vehicle.imageUrl}`
                       }
                       alt={vehicle.name}
                       className="sales-vehicle-image"

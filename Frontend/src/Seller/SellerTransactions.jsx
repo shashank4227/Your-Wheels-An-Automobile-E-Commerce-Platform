@@ -18,7 +18,7 @@ function SellerTransaction() {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/transactions/${id}`
+          `${import.meta.env.VITE_BACKEND_URL}/transactions/${id}`
         );
         console.log("Transactions:", response.data);
 

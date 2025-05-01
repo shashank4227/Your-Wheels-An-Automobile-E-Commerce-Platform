@@ -81,7 +81,7 @@ function BuyerSignup() {
     }
   
     try {
-      const response = await fetch("http://localhost:3000/send-otp", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
@@ -106,7 +106,7 @@ function BuyerSignup() {
     }
   
     try {
-      const response = await fetch("http://localhost:3000/verify-otp", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, otp: verificationCode }),
@@ -134,7 +134,7 @@ function BuyerSignup() {
     }
   
     try {
-      const response = await fetch("http://localhost:3000/buyer-signup", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/buyer-signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

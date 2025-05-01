@@ -57,7 +57,7 @@ function Sell() {
       const token = localStorage.getItem("token");
 
       console.log("Token:", token);
-      const response = await fetch("http://localhost:3000/upload", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -120,7 +120,7 @@ function Sell() {
       const token = localStorage.getItem("token");
       console.log("Using token:", token ? "Token exists" : "No token found");
 
-      const res = await fetch("http://localhost:3000/sellVehicles/add", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/sellVehicles/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

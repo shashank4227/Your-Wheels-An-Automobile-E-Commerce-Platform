@@ -63,7 +63,7 @@ function Login() {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/login', formData);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/login`, formData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', formData.role);
       navigate('/dashboard');
@@ -81,7 +81,7 @@ function Login() {
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
-      const response = await axios.post("http://localhost:3000/google-login", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/google-login`, {
         token: credentialResponse.credential,
       });
   

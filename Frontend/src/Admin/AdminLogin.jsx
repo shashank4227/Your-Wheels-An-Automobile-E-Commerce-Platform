@@ -51,7 +51,7 @@ function AdminLogin() {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/admin-login", formData);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/admin-login`, formData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('email', response.data.email);
       console.log(response.data.email);

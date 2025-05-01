@@ -24,7 +24,7 @@ const LoginRole = () => {
   // ✅ Check if buyer and seller accounts already exist
   const checkExistingAccounts = async (email) => {
     try {
-      const response = await fetch(`http://localhost:3000/check-role?email=${email}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/check-role?email=${email}`, {
         method: "GET",
         credentials: "include",
       });
@@ -56,7 +56,7 @@ const LoginRole = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/set-login-role", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/set-login-role`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: selectedRole, email }),

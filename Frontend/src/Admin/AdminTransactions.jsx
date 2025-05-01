@@ -18,7 +18,7 @@ function AdminTransactions() {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/admin/transactions`
+          `${import.meta.env.VITE_BACKEND_URL}/admin/transactions`
         );
         console.log("Transactions:", response.data);
 

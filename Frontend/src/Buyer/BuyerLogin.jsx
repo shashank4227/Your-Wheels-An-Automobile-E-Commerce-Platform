@@ -45,7 +45,7 @@ function BuyerLogin() {
     console.log("Submitting form with:", formData); // Debugging
   
     try {
-      const response = await axios.post("http://localhost:3000/buyer-login", formData);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/buyer-login`, formData);
       console.log("Login Success:", response.data);
         localStorage.setItem("token", response.data.token);
         const id = response.data.user.userId; // ✅ Use `userId` instead of `_id`
@@ -59,7 +59,7 @@ function BuyerLogin() {
   
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
-      const response = await axios.post("http://localhost:3000/google-login", {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/google-login`, {
         token: credentialResponse.credential,
       });
       

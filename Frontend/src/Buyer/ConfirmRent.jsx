@@ -21,7 +21,7 @@ const navigate = useNavigate();
   useEffect(() => {
     const fetchVehicleDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/rent/${vehicleId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rent/${vehicleId}`, {
           method: 'GET', // ✅ GET Method
           headers: {
             'Accept': 'application/json', // ✅ Expect JSON response
@@ -63,7 +63,7 @@ const navigate = useNavigate();
     });
   
     try {
-      const response = await fetch("http://localhost:3000/create-rent-transaction", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/create-rent-transaction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

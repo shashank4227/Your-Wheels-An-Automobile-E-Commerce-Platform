@@ -32,7 +32,7 @@ function AdminDashBoard() {
       try {
        
 
-        const usersResponse = await axios.get(`http://localhost:3000/users`);
+        const usersResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users`);
         setBuyers(usersResponse.data.buyers);
         setSellers(usersResponse.data.sellers);
 

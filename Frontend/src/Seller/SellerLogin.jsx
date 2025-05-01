@@ -66,7 +66,7 @@ function SellerLogin() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/seller-login",
+        `${import.meta.env.VITE_BACKEND_URL}/seller-login`,
         formData
       );
       const { token, user } = response.data; // ✅ Correct extraction

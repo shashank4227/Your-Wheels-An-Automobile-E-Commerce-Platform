@@ -26,7 +26,7 @@ const ChooseRole = () => {
     // ✅ Check if the user already has an associated role
     const checkUserRole = async () => {
       try {
-        const response = await fetch("http://localhost:3000/check-role", {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/check-role`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email }),
@@ -71,7 +71,7 @@ const ChooseRole = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/set-role", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/set-role`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

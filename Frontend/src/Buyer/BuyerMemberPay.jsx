@@ -70,7 +70,7 @@ function BuyerMemberPay() {
 
     try {
       setLoading(true);
-      const response = await axios.post(`http://localhost:3000/payment`, {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/payment`, {
         userId: id,
         amount,
         billingPeriod,

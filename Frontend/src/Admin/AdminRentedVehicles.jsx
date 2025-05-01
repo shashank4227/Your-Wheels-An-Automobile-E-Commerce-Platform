@@ -21,7 +21,7 @@ function AdminRentedVehicles() {
         }
 
         // ✅ Update API endpoint to fetch sold vehicles
-        const response = await fetch(`http://localhost:3000/rent/admin`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rent/admin`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -76,7 +76,7 @@ function AdminRentedVehicles() {
         <img
           src={vehicle.imageUrl.startsWith("http")
             ? vehicle.imageUrl
-            : `http://localhost:3000${vehicle.imageUrl}`}
+            : `${import.meta.env.VITE_BACKEND_URL}/${vehicle.imageUrl}`}
           alt={vehicle.name}
           className="sales-vehicle-image"
           onError={(e) => (e.target.src = "/default-car.png")}

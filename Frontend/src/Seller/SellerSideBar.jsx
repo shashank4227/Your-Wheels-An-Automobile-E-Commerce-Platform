@@ -22,7 +22,7 @@ function SideBar({ activeLink, id }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/seller/${id}`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/seller/${id}`);
         setUser(response.data);
       } catch (error) {
         console.error("Error fetching user:", error);

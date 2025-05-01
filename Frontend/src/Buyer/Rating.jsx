@@ -39,8 +39,8 @@ const Rating = ({ reviews = [] }) => {
     }
 
     try {
-      const response = await axios.put(`http://localhost:3000/buyer/${vehicleId}/rating`, {
-        userId:id,
+      const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/buyer/${vehicleId}/rating`, {
+        userId: id,
         rating,
         comment,
       });

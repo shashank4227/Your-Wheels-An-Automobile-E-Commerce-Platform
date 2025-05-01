@@ -25,7 +25,7 @@ const EditSeller = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:3000/get-user/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/get-user/${userId}`, {
           headers: {
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -75,7 +75,7 @@ const EditSeller = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:3000/update-user/${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/update-user/${userId}`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`,
