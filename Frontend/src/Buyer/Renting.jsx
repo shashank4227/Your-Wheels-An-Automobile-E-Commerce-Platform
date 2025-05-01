@@ -256,11 +256,8 @@ function Renting() {
                 style={{ backgroundColor: "black" }}
               >
                 <img
-                  src={
-                    vehicle.imageUrl.startsWith("http")
-                      ? vehicle.imageUrl
-                      : `http://localhost:3000${vehicle.imageUrl}`
-                  }
+                  src={vehicle.imageUrl}
+
                   alt={vehicle.name}
                 />
                 <div className="vehicle-info">

@@ -79,11 +79,7 @@ function SoldVehicles() {
                 >
                   <div className="sales-vehicle-image-container">
                     <img
-                      src={
-                        vehicle.imageUrl.startsWith("http")
-                          ? vehicle.imageUrl
-                          : `${import.meta.env.VITE_BACKEND_URL}/${vehicle.imageUrl}`
-                      }
+                      src={vehicle.imageUrl}
                       alt={vehicle.name}
                       className="sales-vehicle-image"
                       onError={(e) => (e.target.src = "/default-car.png")}

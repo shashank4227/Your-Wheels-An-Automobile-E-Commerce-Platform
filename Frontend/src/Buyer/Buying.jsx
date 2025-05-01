@@ -159,7 +159,7 @@ function Buying() {
               {filteredVehicles.map((vehicle) => (
                 <div key={vehicle._id} className="vehicle-card">
                   <img
-                    src={`${import.meta.env.VITE_BACKEND_URL}${vehicle.imageUrl}`}
+                    src={vehicle.imageUrl}
                     alt={vehicle.name}
                     onError={(e) =>
                       (e.target.src = "https://via.placeholder.com/150")
