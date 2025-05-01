@@ -25,7 +25,6 @@ const sellVehicleController = require("../controllers/SellVehicle");
 const router = express.Router();
 
 const fs = require("fs");
-const path = require("path");
 const cloudinary = require("../utils/cloudinary");
 const upload = multer({ dest: "uploads/" }); // Temporary storage
 
