@@ -23,7 +23,7 @@ function SellerVehicleSalesList() {
           return;
         }
 
-        const response = await fetch(`http://localhost:3000/sell/seller/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/sell/seller/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,7 +55,7 @@ function SellerVehicleSalesList() {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:3000/sell/seller/${vehicleId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/sell/seller/${vehicleId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -99,7 +99,7 @@ function SellerVehicleSalesList() {
                 <div key={vehicle._id} className="sales-vehicle-card" style={{ backgroundColor: "black" }}>
                   <div className="sales-vehicle-image-container">
                     <img
-                      src={vehicle.imageUrl.startsWith("http") ? vehicle.imageUrl : `http://localhost:3000${vehicle.imageUrl}`}
+                      src={vehicle.imageUrl.startsWith("http") ? vehicle.imageUrl : `${import.meta.env.VITE_BACKEND_URL}/${vehicle.imageUrl}`}
                       alt={vehicle.name}
                       className="sales-vehicle-image"
                       onError={(e) => (e.target.src = "/default-car.png")}

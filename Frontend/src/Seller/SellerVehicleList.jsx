@@ -96,7 +96,7 @@ function SellerVehicleList() {
               {vehicles.map((vehicle) => (
                 <div key={vehicle._id} className="sales-vehicle-card" style={{ backgroundColor: "black" }}>
                   <img 
-                    src={`http://localhost:3000${vehicle.imageUrl}`} 
+                    src={`${import.meta.env.VITE_BACKEND_URL}/${vehicle.imageUrl}`} 
                     alt={vehicle.name} 
                     className="vehicle-image"
                   />

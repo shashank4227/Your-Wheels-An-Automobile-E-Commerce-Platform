@@ -24,7 +24,7 @@ function VehiclesOnRent() {
           return;
         }
 
-        const response = await fetch(`http://localhost:3000/vehicles-on-rent/seller/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/vehicles-on-rent/seller/${id}`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -70,7 +70,7 @@ function VehiclesOnRent() {
               {vehicles.map((vehicle) => (
                 <div key={vehicle._id} className="sales-vehicle-card" style={{ backgroundColor: "black" }}>
                   <img 
-                    src={`http://localhost:3000${vehicle.imageUrl}`} 
+                    src={`${import.meta.env.VITE_BACKEND_URL}/${vehicle.imageUrl}`} 
                     alt={vehicle.name} 
                     className="vehicle-image"
                   />
