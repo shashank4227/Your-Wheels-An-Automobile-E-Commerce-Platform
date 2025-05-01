@@ -14,7 +14,7 @@ function CurrentSellerMembership() {
   console.log('Membership:', membership);
   const removeMembership = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/seller-memberships/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/seller-memberships/${id}`, {
         method: 'POST',
       });
 

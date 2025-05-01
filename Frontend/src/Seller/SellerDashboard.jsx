@@ -33,7 +33,7 @@ ChartJS.register(
 );
 
 // Set API base URL from environment variable or use deployed URL as fallback
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://your-wheels-an-automobile-e-commerce.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 function SellerDashBoard() {
   const { id } = useParams();
