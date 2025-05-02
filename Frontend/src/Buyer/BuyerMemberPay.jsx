@@ -36,29 +36,42 @@ function BuyerMemberPay() {
   }, [location]);
 
   const validateInputs = () => {
+    const newErrors = {};
+  
     if (!zipCode.match(/^\d{6}$/)) {
-      setMessage("Zip Code must be exactly 6 digits.");
-      return false;
+      newErrors.zipCode = 'Zip code must be 6 digits';
     }
     if (!nameOnCard.trim()) {
-      setMessage("Name on Card is required.");
-      return false;
+      newErrors.nameOnCard = 'Name on card is required';
     }
     if (!cardNumber.match(/^\d{16}$/)) {
-      setMessage("Credit Card Number must be exactly 16 digits.");
-      return false;
+      newErrors.cardNumber = 'Card number must be 16 digits';
     }
-    if (!expireDate.match(/^(0[1-9]|1[0-2])\/\d{2}$/)) {
-      setMessage("Expiration Date must be in MM/YY format.");
-      return false;
+  
+    const expireDatePattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    if (!expireDate.match(expireDatePattern)) {
+      newErrors.expireDate = 'Expire date format should be MM/YY';
+    } else {
+      const [expMonth, expYear] = expireDate.split('/').map(Number);
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+      const currentYear = currentDate.getFullYear() % 100; // Get last two digits of year
+  
+      if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
+        newErrors.expireDate = 'Expiry date must be current or future month/year';
+      }
     }
+  
     if (!cvv.match(/^\d{3}$/)) {
-      setMessage("CVV must be exactly 3 digits.");
-      return false;
+      newErrors.cvv = 'CVV must be 3 digits';
     }
-    return true;
+    if (!membershipType) {
+      newErrors.membershipType = 'Membership type is required';
+    }
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
-
   // ✅ Handle Payment
   const handlePayment = async () => {
     if (!validateInputs()) return;
