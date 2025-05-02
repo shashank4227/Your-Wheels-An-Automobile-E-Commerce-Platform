@@ -5,25 +5,34 @@ const jwt = require("jsonwebtoken");
 const sellerSchema = new mongoose.Schema(
   {
     firstName: { type: String, trim: true },
-    lastName: { type: String, trim: true},
+    lastName: { type: String, trim: true },
     email: { type: String, required: true, trim: true, lowercase: true, unique: true },
-    password: { type: String, select: false }, // ✅ Exclude password by default in queries
-    googleId: { type: String, unique: true, sparse: true }, // ✅ Unique for Google sign-in
-    profilePicture: { type: String }, // Store Google profile picture URL
+    password: { type: String, select: false }, // ✅ Exclude password by default
+    googleId: { type: String, unique: true, sparse: true }, // ✅ Unique + sparse for Google
+    profilePicture: { type: String },
     role: { type: String, default: "seller" },
     verifiedEmail: { type: Boolean, default: false },
-    isMember: {
-      type: Boolean,
-      default: false
-    },membershipType: { type: String, enum: ['Sell Access', 'Rent Access', 'Premium Access'], default: null }
+    isMember: { type: Boolean, default: false },
+    membershipType: { type: String, enum: ['Sell Access', 'Rent Access', 'Premium Access'], default: null }
   },
   { timestamps: true }
 );
 
-// ✅ Unique index for email + role (allows same email for different roles)
+// ✅ Indexes for optimization (no duplicates)
+
+// Compound unique index for email + role
 sellerSchema.index({ email: 1, role: 1 }, { unique: true });
 
-// ✅ Hash password before saving (only for normal login)
+// Index on isMember if filtering by membership status
+sellerSchema.index({ isMember: 1 });
+
+// Index on membershipType if querying or grouping by type
+sellerSchema.index({ membershipType: 1 });
+
+// Index on createdAt for sorting or pagination by newest
+sellerSchema.index({ createdAt: -1 });
+
+// ✅ Hash password before saving (only if modified)
 sellerSchema.pre("save", async function (next) {
   if (!this.isModified("password") || !this.password) return next();
   try {
@@ -34,9 +43,9 @@ sellerSchema.pre("save", async function (next) {
   }
 });
 
-// ✅ Compare password for login
+// ✅ Compare password method
 sellerSchema.methods.comparePassword = async function (password) {
-  if (!this.password) return false; // Prevent errors if password is missing
+  if (!this.password) return false;
   return bcrypt.compare(password, this.password);
 };
 
