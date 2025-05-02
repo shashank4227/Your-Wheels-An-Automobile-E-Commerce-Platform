@@ -58,7 +58,7 @@ const EditUser = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/update-user/${userId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/update-user/${userId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
