@@ -6,14 +6,24 @@ const sellerSchema = new mongoose.Schema(
   {
     firstName: { type: String, trim: true },
     lastName: { type: String, trim: true },
-    email: { type: String, required: true, trim: true, lowercase: true, unique: true },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      unique: true,
+    },
     password: { type: String, select: false }, // ✅ Exclude password by default
     googleId: { type: String, unique: true, sparse: true }, // ✅ Unique + sparse for Google
     profilePicture: { type: String },
     role: { type: String, default: "seller" },
     verifiedEmail: { type: Boolean, default: false },
     isMember: { type: Boolean, default: false },
-    membershipType: { type: String, enum: ['Sell Access', 'Rent Access', 'Premium Access'], default: null }
+    membershipType: {
+      type: String,
+      enum: ["Sell Access", "Rent Access", "Premium Access"],
+      default: null,
+    },
   },
   { timestamps: true }
 );

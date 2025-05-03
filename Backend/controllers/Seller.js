@@ -7,28 +7,38 @@ exports.sellerSignUp = async (req, res) => {
   const { firstName, lastName, email, password, terms } = req.body;
 
   if (!firstName || !lastName || !email || !password || !terms) {
-    return res.status(400).json({ success: false, msg: "All fields are required." });
+    return res
+      .status(400)
+      .json({ success: false, msg: "All fields are required." });
   }
 
   try {
     let existingUser = await Seller.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ success: false, msg: "User already exists." });
+      return res
+        .status(400)
+        .json({ success: false, msg: "User already exists." });
     }
 
     // ✅ Create new buyer and save
-    const newUser = new Seller({ firstName, lastName, email, password, role: "seller" });
+    const newUser = new Seller({
+      firstName,
+      lastName,
+      email,
+      password,
+      role: "seller",
+    });
     await newUser.save();
 
     // ✅ Generate token using schema method
     const token = newUser.generateAuthToken();
 
-    res.status(201).json({ 
-      success: true, 
-      msg: "Seller registered successfully", 
-      userId: newUser._id, 
-      role: "seller", 
-      token 
+    res.status(201).json({
+      success: true,
+      msg: "Seller registered successfully",
+      userId: newUser._id,
+      role: "seller",
+      token,
     });
   } catch (error) {
     console.error("Signup error:", error);
@@ -55,7 +65,7 @@ exports.sellerLogin = async (req, res) => {
   try {
     // ✅ Retrieve user with password field explicitly selected
     const user = await Seller.findOne({ email }).select("+password");
-console.log(user)
+    console.log(user);
     if (!user) {
       return res.status(400).json({ message: "No User found" });
     }
@@ -70,10 +80,11 @@ console.log(user)
     const token = user.generateAuthToken();
 
     res.json({
+      success: true,
       message: "Login successful",
-      token, 
+      token,
       user: {
-        sellerId: user._id,  // ✅ Correct
+        sellerId: user._id, // ✅ Correct
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
