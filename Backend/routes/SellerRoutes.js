@@ -193,7 +193,7 @@ router.delete("/sell/seller/:vehicleId", async (req, res) => {
     }
 
     // Delete the vehicle
-    await Vehicle.findByIdAndDelete(vehicleId);
+    await SellVehicle.findByIdAndDelete(vehicleId);
 
     res.json({ message: "Vehicle deleted successfully" });
   } catch (error) {
