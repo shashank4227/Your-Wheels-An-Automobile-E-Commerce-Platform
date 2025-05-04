@@ -7,7 +7,7 @@ exports.adminLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Load allowed admins from environment or config
+    // Load allowed admins from environment or config 3 admins
     const allowedAdmins = JSON.parse(process.env.ALLOWED_ADMINS);
 
     // Find the admin with matching credentials
