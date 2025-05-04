@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import SideBar from "./BuyerSideBar";
-
+import React from "react";
 const EditBuyer = () => {
   const { id: userId } = useParams(); // Get userId from URL
   const navigate = useNavigate();

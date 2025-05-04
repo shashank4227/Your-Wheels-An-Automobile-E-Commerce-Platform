@@ -4,6 +4,7 @@ import axios from "axios"; // ✅ Import axios for backend requests
 import { Link, useParams, useLocation } from "react-router-dom";
 import SideBar from "./BuyerSideBar";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 
 function Renting() {
   const { id } = useParams(); // Get ID from URL

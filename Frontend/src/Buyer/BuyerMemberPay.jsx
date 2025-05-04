@@ -4,7 +4,6 @@ import { ArrowRight } from "lucide-react";
 import "./BuyerMemberPay.css";
 import SideBar from "./BuyerSideBar";
 import axios from "axios";
-
 function BuyerMemberPay() {
   const { id } = useParams();
   const location = useLocation();

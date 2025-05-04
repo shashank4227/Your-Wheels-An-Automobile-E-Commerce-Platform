@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import SideBar from "./SellerSideBar";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 function Sell() {
   const navigate = useNavigate();
   const { id } = useParams(); // ✅ Extract `id` from route params

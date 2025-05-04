@@ -4,7 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from 'axios';
 import './BuyerLogin.css';
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-
+import React from 'react';
 const images = [
   "/login-1.jpeg",
   "/login-3.jpeg",

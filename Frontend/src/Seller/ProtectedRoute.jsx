@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import SideBar from "./SellerSideBar";
-
 function ProtectedSellerRoute({ children, requiredAccess }) {
   const navigate = useNavigate();
   const [id, setId] = useState("");

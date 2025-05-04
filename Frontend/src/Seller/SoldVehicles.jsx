@@ -3,7 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import SideBar from "./SellerSideBar";
 import "./SellerVehicleList.css";
 import "./SellerVehicleSalesList.css";
-
+import React from "react";
 function SoldVehicles() {
   const { id } = useParams();
   const location = useLocation();

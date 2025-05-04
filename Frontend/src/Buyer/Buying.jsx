@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./Buying.css";
 import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import SideBar from "./BuyerSideBar";
+import React from "react";
 
 function Buying() {
   const { id } = useParams();

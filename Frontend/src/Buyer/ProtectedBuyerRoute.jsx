@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import SideBar from './BuyerSideBar';
+import React from 'react';
 
 function ProtectedBuyerRoute({ children, requiredAccess }) {
   const navigate = useNavigate();

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
+import React from "react";
 
 const images = ["/login-1.jpeg", "/login-3.jpeg", "/login-2.jpeg"];
 

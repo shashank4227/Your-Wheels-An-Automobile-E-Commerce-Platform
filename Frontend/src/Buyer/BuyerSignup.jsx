@@ -10,7 +10,7 @@ const images = [
   "/login-3.jpeg",
   "/login-2.jpeg",
 ];
-
+import React from 'react';
 
 function BuyerSignup() {
 

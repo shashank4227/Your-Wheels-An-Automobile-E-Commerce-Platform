@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import SideBar from "./BuyerSideBar";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 function RentedVehicles() {
   const { id } = useParams();
   const location = useLocation();

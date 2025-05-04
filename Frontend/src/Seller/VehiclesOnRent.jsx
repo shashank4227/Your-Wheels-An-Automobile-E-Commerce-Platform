@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import SideBar from "./SellerSideBar";
 import "./SellerVehicleList.css";
-
+import React from "react";
 function VehiclesOnRent() {
   const { id } = useParams();
   const location = useLocation();

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from "react-icons/fa";  // Import eye icons
 import { GoogleOAuthProvider, GoogleLogin ,useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-
+import React from 'react';
 const images = [
   "/login-1.jpeg",
   "/login-3.jpeg",
