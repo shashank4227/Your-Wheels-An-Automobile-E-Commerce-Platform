@@ -72,14 +72,27 @@ router.get("/rent/:vehicleId", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/rent-vehicles", async (req, res) => {
+router.post("/rent-vehicle", async (req, res) => {
   try {
-    // Fetch only available vehicles where isRented = false
-    const vehicles = await Vehicle.find({ isRented: false });
-    res.status(200).json(vehicles);
-  } catch (err) {
-    console.error("Error fetching available vehicles:", err);
-    res.status(500).json({ error: "Failed to fetch available vehicles" });
+    const { buyerId, vehicleId } = req.body;
+
+    const vehicle = await Vehicle.findById(vehicleId);
+    if (!vehicle) {
+      return res.status(404).json({ message: "Vehicle not found" });
+    }
+
+    if (vehicle.isRented) {
+      return res.status(400).json({ message: "Vehicle is already rented" });
+    }
+
+    vehicle.isRented = true;
+    vehicle.buyer = buyerId;
+    await vehicle.save();
+
+    res.status(200).json({ message: "Vehicle rented successfully", vehicle });
+  } catch (error) {
+    console.error("Error renting vehicle:", error);
+    res.status(500).json({ error: "Failed to rent vehicle" });
   }
 });
 

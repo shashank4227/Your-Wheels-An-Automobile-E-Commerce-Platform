@@ -129,7 +129,7 @@ exports.getVehicleById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // ✅ Validate ObjectId
+    // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -141,6 +141,7 @@ exports.getVehicleById = async (req, res) => {
       "sellerId",
       "name email"
     );
+
     if (!vehicle) {
       return res.status(404).json({
         success: false,
@@ -153,14 +154,16 @@ exports.getVehicleById = async (req, res) => {
       vehicle,
     });
   } catch (error) {
-    console.error("❌ Error fetching vehicle:", error);
+    console.error("❌ Error fetching vehicle:", error);  // This will give more context in case of failure
     res.status(500).json({
       success: false,
       message: "Error fetching vehicle",
-      error: error.message,
+      error: error.message, // Including the error message for debugging
     });
   }
 };
+
+
 
 exports.getRentVehicleById = async (req, res) => {
   try {
