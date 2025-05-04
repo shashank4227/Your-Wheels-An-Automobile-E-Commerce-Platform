@@ -27,6 +27,17 @@ jobs:
         run: |
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+          echo "GOOGLE_REDIRECT_URI_BUYER=${{ secrets.GOOGLE_REDIRECT_URI_BUYER }}" >> .env
+          echo "GOOGLE_REDIRECT_URI_SELLER=${{ secrets.GOOGLE_REDIRECT_URI_SELLER }}" >> .env
+          echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" >> .env
+          echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> .env
+          echo "ALLOWED_ADMINS=${{ secrets.ALLOWED_ADMINS }}" >> .env
+          echo "CLOUD_NAME=${{ secrets.CLOUD_NAME }}" >> .env
+          echo "CLOUD_API_KEY=${{ secrets.CLOUD_API_KEY }}" >> .env
+          echo "CLOUD_API_SECRET=${{ secrets.CLOUD_API_SECRET }}" >> .env
 
       - name: Install Backend Dependencies
         run: npm i
