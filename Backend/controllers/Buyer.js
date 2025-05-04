@@ -4,36 +4,37 @@ const Buyer = require("../models/Buyer");
 const SellVehicle = require("../models/SellVehicle");
 const Payment = require("../models/Payment");
 const Seller = require("../models/Seller");
-const mongoose=require("mongoose");
+const Vehicle = require("../models/Vehicle");
+const mongoose = require("mongoose");
+
+const { getRedisClient, isTestEnvironment, isRedisReady } = require("../config/redis");
+
+const safeRedisOperation = async (operation) => {
+  try {
+    if (!isRedisReady() && !isTestEnvironment()) return null;
+    return await operation();
+  } catch (err) {
+    console.error("Redis operation failed:", err);
+    return null;
+  }
+};
+
 // Buyer Signup
 exports.buyerSignUp = async (req, res) => {
   const { firstName, lastName, email, password, terms } = req.body;
 
   if (!firstName || !lastName || !email || !password || !terms) {
-    return res
-      .status(400)
-      .json({ success: false, msg: "All fields are required." });
+    return res.status(400).json({ success: false, msg: "All fields are required." });
   }
 
   try {
     let existingUser = await Buyer.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, msg: "User already exists." });
+      return res.status(400).json({ success: false, msg: "User already exists." });
     }
 
-    // ✅ Create new buyer and save
-    const newUser = new Buyer({
-      firstName,
-      lastName,
-      email,
-      password,
-      role: "buyer",
-    });
+    const newUser = new Buyer({ firstName, lastName, email, password, role: "buyer" });
     await newUser.save();
-
-    // ✅ Generate token using schema method
     const token = newUser.generateAuthToken();
 
     res.status(201).json({
@@ -67,25 +68,17 @@ exports.buyerLogin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // ✅ Retrieve user with password field explicitly selected
     const user = await Buyer.findOne({ email }).select("+password");
+    if (!user) return res.status(400).json({ message: "No User found" });
 
-    if (!user) {
-      return res.status(400).json({ message: "No User found" });
-    }
-
-    // ✅ Compare password using schema method
     const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    // ✅ Generate JWT using schema method
     const token = user.generateAuthToken();
 
     res.json({
       message: "Login successful",
-      token, // Send JWT to the client
+      token,
       user: {
         userId: user._id,
         firstName: user.firstName,
@@ -99,117 +92,126 @@ exports.buyerLogin = async (req, res) => {
   }
 };
 
+// ✅ Get Available Vehicles (with Redis cache)
 exports.getAvailableVehicles = async (req, res) => {
+  const cacheKey = "available_vehicles";
+
+  const cachedData = await safeRedisOperation(async () => {
+    const client = getRedisClient();
+    return await client.get(cacheKey);
+  });
+
+  if (cachedData) {
+    return res.status(200).json(JSON.parse(cachedData));
+  }
+
   try {
     const vehicles = await SellVehicle.find({ isSold: false });
-    console.log("Retrieved Vehicles:", vehicles); // Debugging line
+
+    await safeRedisOperation(async () => {
+      const client = getRedisClient();
+      await client.setEx(cacheKey, 3600, JSON.stringify({ success: true, vehicles }));
+    });
+
     res.status(200).json({ success: true, vehicles });
   } catch (error) {
     console.error("Error retrieving vehicles:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Error retrieving vehicles", error });
+    res.status(500).json({ success: false, message: "Error retrieving vehicles", error });
   }
 };
 
+// ✅ Buy Vehicle
 exports.buyVehicle = async (req, res) => {
   try {
     const { buyerId, vehicleId, amount } = req.body;
 
     const vehicle = await SellVehicle.findById(vehicleId).populate("sellerId");
     if (!vehicle || vehicle.isSold) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Vehicle not available" });
+      return res.status(400).json({ success: false, message: "Vehicle not available" });
     }
 
-    // Update Vehicle Status
     vehicle.isSold = true;
     await vehicle.save();
 
-    // Add transaction for buyer
-    await Payment.create({
-      userId: buyerId,
-      amount: -amount, // Deducting amount from buyer
-    });
+    await Payment.create({ userId: buyerId, amount: -amount });
+    await Payment.create({ userId: vehicle.sellerId._id, amount });
 
-    // Add transaction for seller
-    await Payment.create({
-      userId: vehicle.sellerId._id,
-      amount: amount, // Adding amount to seller
+    // Clear relevant Redis keys
+    await safeRedisOperation(async () => {
+      const client = getRedisClient();
+      await client.del("available_vehicles");
     });
-
-    // Notify seller (Assuming we use a messaging system)
-    console.log(
-      `Notification: Buyer purchased ${vehicle.name}. Seller: ${vehicle.sellerId.email}`
-    );
 
     res.status(200).json({ success: true, message: "Purchase successful" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Error processing purchase", error });
+    res.status(500).json({ success: false, message: "Error processing purchase", error });
   }
 };
 
-// ✅ Get vehicles listed by a specific seller
+// ✅ Buyer bought vehicles (with cache)
 exports.getBuyerBoughtVehicles = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ success: false, message: "Invalid seller ID" });
+  }
+
+  const cacheKey = `bought_vehicles_${id}`;
+
+  const cachedData = await safeRedisOperation(async () => {
+    const client = getRedisClient();
+    return await client.get(cacheKey);
+  });
+
+  if (cachedData) {
+    return res.status(200).json(JSON.parse(cachedData));
+  }
+
   try {
-    const { id } = req.params;
+    const vehicles = await SellVehicle.find({ buyerId: id });
 
-    // ✅ Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid seller ID",
-      });
-    }
-
-    console.log("✅ Seller ID Received:", id);
-
-    const vehicles = await SellVehicle.find({ buyerId: id })
-
-    res.status(200).json({
-      success: true,
-      vehicles,
+    await safeRedisOperation(async () => {
+      const client = getRedisClient();
+      await client.setEx(cacheKey, 3600, JSON.stringify({ success: true, vehicles }));
     });
+
+    res.status(200).json({ success: true, vehicles });
   } catch (error) {
     console.error("❌ Error fetching seller vehicles:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error fetching vehicles for the seller",
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: "Error fetching vehicles", error: error.message });
   }
 };
-// ✅ Get vehicles listed by a specific buyer
-const Vehicle = require("../models/Vehicle");
+
+// ✅ Buyer rented vehicles (with cache)
 exports.getBuyerRentedVehicles = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ success: false, message: "Invalid seller ID" });
+  }
+
+  const cacheKey = `rented_vehicles_${id}`;
+
+  const cachedData = await safeRedisOperation(async () => {
+    const client = getRedisClient();
+    return await client.get(cacheKey);
+  });
+
+  if (cachedData) {
+    return res.status(200).json(JSON.parse(cachedData));
+  }
+
   try {
-    const { id } = req.params;
+    const vehicles = await Vehicle.find({ buyer: id });
 
-    // ✅ Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid seller ID",
-      });
-    }
-
-    console.log("✅ Seller ID Received:", id);
-
-    const vehicles = await Vehicle.find({ buyer: id })
-
-    res.status(200).json({
-      success: true,
-      vehicles,
+    await safeRedisOperation(async () => {
+      const client = getRedisClient();
+      await client.setEx(cacheKey, 3600, JSON.stringify({ success: true, vehicles }));
     });
+
+    res.status(200).json({ success: true, vehicles });
   } catch (error) {
-    console.error("❌ Error fetching seller vehicles:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error fetching vehicles for the seller",
-      error: error.message,
-    });
+    console.error("❌ Error fetching rented vehicles:", error);
+    res.status(500).json({ success: false, message: "Error fetching vehicles", error: error.message });
   }
 };

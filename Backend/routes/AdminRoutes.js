@@ -1,24 +1,77 @@
 const express = require("express");
-const { adminLogin,getVehiclesOnSale,getAdminVehiclesForRent,getAdminSoldVehicles,getAdminRentedVehicles } = require("../controllers/Admin");
-const { set } = require("mongoose");
+const { 
+  adminLogin,
+  getVehiclesOnSale,
+  getAdminVehiclesForRent,
+  getAdminSoldVehicles,
+  getAdminRentedVehicles
+} = require("../controllers/Admin");
+const { cacheMiddleware, clearCache } = require("../middleware/cacheMiddleware");
 
 const router = express.Router();
 
+/* ==============================
+   ADMIN AUTHENTICATION ROUTE
+   ============================== */
 router.post("/admin-login", adminLogin);
+
+/* ==============================
+   ADMIN VEHICLE MANAGEMENT ROUTES
+   ============================== */
+// Get vehicles on sale (cached for 5 minutes)
 router.get(
-  "/admin-vehicle-on-sale", getVehiclesOnSale
-);
-router.get(
-  "/vehicles/admin", getAdminVehiclesForRent
-);
-router.get(
-  "/sold/admin", getAdminSoldVehicles
+  "/admin-vehicle-on-sale",
+  cacheMiddleware(300, "admin:vehicles:sale"), // Cache for 5 minutes
+  getVehiclesOnSale
 );
 
+// Get vehicles for rent (cached for 5 minutes)
 router.get(
-  "/rent/admin", getAdminRentedVehicles
+  "/vehicles/admin",
+  cacheMiddleware(300, "admin:vehicles:rent"), // Cache for 5 minutes
+  getAdminVehiclesForRent
 );
 
+// Get sold vehicles (cached for 15 minutes)
+router.get(
+  "/sold/admin",
+  cacheMiddleware(900, "admin:vehicles:sold"), // Cache for 15 minutes
+  getAdminSoldVehicles
+);
+
+// Get rented vehicles (cached for 15 minutes)
+router.get(
+  "/rent/admin",
+  cacheMiddleware(900, "admin:vehicles:rented"), // Cache for 15 minutes
+  getAdminRentedVehicles
+);
+
+/* ==============================
+   ADMIN CACHE MANAGEMENT ROUTES
+   ============================== */
+// Clear specific cache
+router.post(
+  "/clear-cache",
+  (req, res) => {
+    const { cacheKey } = req.body;
+    if (!cacheKey) {
+      return res.status(400).json({ success: false, message: "Cache key is required" });
+    }
+    
+    clearCache(cacheKey)(req, res, () => {
+      res.json({ success: true, message: `Cache cleared for ${cacheKey}` });
+    });
+  }
+);
+
+// Clear all admin-related caches
+router.post(
+  "/clear-all-caches",
+  clearCache("admin:*"),
+  (req, res) => {
+    res.json({ success: true, message: "All admin caches cleared" });
+  }
+);
 
 module.exports = router;
 /**

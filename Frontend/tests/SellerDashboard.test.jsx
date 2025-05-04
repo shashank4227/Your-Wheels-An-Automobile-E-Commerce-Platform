@@ -84,22 +84,24 @@ describe("SellerDashBoard Component", () => {
     expect(vehiclesSold).toBeInTheDocument();
     expect(vehiclesSold).toHaveTextContent("10");
   });
-  
+
   test("shows total rentals with correct value", async () => {
     renderWithRouter();
     const rentals = await screen.findByTestId("total-rentals");
     expect(rentals).toBeInTheDocument();
     expect(rentals).toHaveTextContent("5");
   });
-  
-  
- 
-  
+
+  test("shows total revenue with correct value", async () => {
+    renderWithRouter();
+    const revenue = await screen.findByTestId("total-revenue");
+    expect(revenue).toBeInTheDocument();
+    expect(revenue).toHaveTextContent("$75,000");
+  });
 
   test("renders doughnut chart for vehicle distribution", async () => {
     renderWithRouter();
     expect(await screen.findByTestId("doughnut-chart")).toBeInTheDocument();
   });
 
- 
 });
