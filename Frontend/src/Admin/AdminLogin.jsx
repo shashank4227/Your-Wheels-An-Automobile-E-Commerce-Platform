@@ -1,18 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import axios from 'axios';
+import axios from "axios";
+import React from "react";
 
-const images = [
-  "/login-1.jpeg",
-  "/login-3.jpeg",
-  "/login-2.jpeg",
-];
+const images = ["/login-1.jpeg", "/login-3.jpeg", "/login-2.jpeg"];
 
 function AdminLogin() {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -28,9 +25,9 @@ function AdminLogin() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     setError("");
   };
@@ -51,14 +48,19 @@ function AdminLogin() {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/admin-login`, formData);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('email', response.data.email);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/admin-login`,
+        formData
+      );
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("email", response.data.email);
       console.log(response.data.email);
 
       navigate(`/admin-dashboard/${formData.email}`); // Fixing the email reference here
     } catch (error) {
-      setError(error.response?.data?.message || "Login failed. Please try again.");
+      setError(
+        error.response?.data?.message || "Login failed. Please try again."
+      );
     }
   };
 
@@ -69,9 +71,16 @@ function AdminLogin() {
           <img src="/logo_without_bg.png" alt="Logo" />
         </Link>
         <div className="slider">
-          <img src={images[currentIndex]} alt={`Slide ${currentIndex + 1}`} className="slide-image" />
+          <img
+            src={images[currentIndex]}
+            alt={`Slide ${currentIndex + 1}`}
+            className="slide-image"
+          />
           <div className="image-content">
-            <h2>Your Wheels,<br /> A website for Vehicle Enthusiasts</h2>
+            <h2>
+              Your Wheels,
+              <br /> A website for Vehicle Enthusiasts
+            </h2>
             <div className="dots">
               {images.map((_, index) => (
                 <div
@@ -86,7 +95,9 @@ function AdminLogin() {
       </div>
 
       <div className="form-section">
-        <Link to="/" className="back-link">Back to website →</Link>
+        <Link to="/" className="back-link">
+          Back to website →
+        </Link>
 
         <div className="form-container">
           <div className="form-header">
@@ -103,21 +114,25 @@ function AdminLogin() {
               onChange={handleChange}
               autoComplete="username" // Fixing the warning
             />
-
             <div className="password-container">
               <input
                 className="input-field password-input"
                 placeholder="Enter your password"
-                type={showPassword ? "text" : "password"} // Fixing password visibility toggle
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 autoComplete="current-password"
               />
 
-              <span className="eye-icon" onClick={() => setShowPassword(prev => !prev)}>
+              <button
+                type="button"
+                className="eye-icon"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label="Toggle password visibility"
+              >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </span>
+              </button>
             </div>
 
             {error && <div className="error-message">{error}</div>}

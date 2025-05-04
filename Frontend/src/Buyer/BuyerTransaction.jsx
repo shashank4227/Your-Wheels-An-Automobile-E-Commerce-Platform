@@ -15,6 +15,9 @@ function BuyerTransaction() {
   const [showPurchases, setShowPurchases] = useState(true);
   const [showRentals, setShowRentals] = useState(true);
 
+  const [error, setError] = useState(null);
+
+
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -26,9 +29,11 @@ function BuyerTransaction() {
         } else {
           console.error('Invalid transaction format:', response.data);
         }
-      } catch (error) {
+      }catch (error) {
         console.error('Error fetching transactions:', error);
+        setError('Error loading transactions');
       }
+      
     };
 
     fetchTransactions();
@@ -72,6 +77,11 @@ function BuyerTransaction() {
           <h1 style={{color:"white"}}>My Transactions</h1>
           <p>Track your purchases, rentals, earnings, and spending</p>
         </div>
+        {error && (
+  <div className="error-message" role="alert">
+    {error}
+  </div>
+)}
 
         {/* ✅ Summary Cards */}
         <div className="summary-cards">

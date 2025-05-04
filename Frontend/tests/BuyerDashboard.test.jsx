@@ -3,10 +3,14 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import DashBoard from "../src/Buyer/BuyerDashBoard";
 import axios from "axios";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { describe, it, beforeEach, vi, expect } from "vitest";
+import '@testing-library/jest-dom';
 
-// Mock axios and navigation
-jest.mock("axios", () => ({
-  get: jest.fn(),
+// Mock axios
+vi.mock("axios", () => ({
+  default: {
+    get: vi.fn(),
+  },
 }));
 
 const mockUser = {
@@ -38,7 +42,7 @@ const renderWithRouter = (ui, { route = "/buyer-dashboard/123" } = {}) => {
 
 describe("DashBoard", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     localStorage.setItem("token", "mock-token");
     localStorage.setItem("buyerId", "123");
   });
@@ -51,7 +55,6 @@ describe("DashBoard", () => {
 
     renderWithRouter(<DashBoard />);
 
-    // Wait for data to load
     await waitFor(() => {
       expect(screen.getByText("Buyer Dashboard")).toBeInTheDocument();
     });
@@ -63,9 +66,6 @@ describe("DashBoard", () => {
     expect(screen.getByText("3")).toBeInTheDocument();
     expect(screen.getByText(/₹75,000/)).toBeInTheDocument();
   });
-
- 
-
 
   it("navigates to edit page when Update button is clicked", async () => {
     axios.get.mockImplementation((url) => {

@@ -4,6 +4,7 @@ import "./SellerDashboard.css";
 import { Mail, Calendar, Edit } from "lucide-react";
 import SideBar from "./SellerSideBar";
 import axios from "axios";
+import React from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -33,7 +34,8 @@ ChartJS.register(
 );
 
 // Set API base URL from environment variable or use deployed URL as fallback
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+const API_BASE_URL =
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 function SellerDashBoard() {
   const { id } = useParams();
@@ -97,10 +99,8 @@ function SellerDashBoard() {
     const fetchStats = async () => {
       try {
         console.log(`Fetching stats from: ${API_BASE_URL}/seller-stats/${id}`);
-        const response = await axios.get(
-          `${API_BASE_URL}/seller-stats/${id}`
-        );
-        
+        const response = await axios.get(`${API_BASE_URL}/seller-stats/${id}`);
+
         setStats(response.data);
       } catch (error) {
         console.error("Error fetching stats:", error);
@@ -166,6 +166,21 @@ function SellerDashBoard() {
       navigate("/"); // Redirect to login page
     }
   };
+  const [error, setError] = useState(null);
+
+  // Update your fetch functions to handle errors:
+  const fetchUser = async () => {
+    try {
+      setError(null);
+      const response = await axios.get(`${API_BASE_URL}/seller/${id}`);
+      setUser(response.data);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="app">
@@ -174,6 +189,12 @@ function SellerDashBoard() {
       </nav>
 
       <main className="main-content" style={{ backgroundColor: "#141414" }}>
+        {error && (
+          <div className="error-message">
+            <p>Error loading data: {error}</p>
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        )}
         <br />
         <br />
         <div className="profile-container">
@@ -209,14 +230,27 @@ function SellerDashBoard() {
                   <div className="detail-item">
                     <Calendar size={18} />
                     <span>
-                      Joined {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
+                      Joined{" "}
+                      {user?.createdAt
+                        ? new Date(user.createdAt).toLocaleDateString()
+                        : "N/A"}
                     </span>
                   </div>
                   <button
-                   style={{ backgroundColor: "transparent", color: "rgb(255,255,255)", display: "flex", alignItems: "center", width: "150px", height: "30px", border: "none", borderRadius: "10px", cursor: "pointer" }}
+                    style={{
+                      backgroundColor: "transparent",
+                      color: "rgb(255,255,255)",
+                      display: "flex",
+                      alignItems: "center",
+                      width: "150px",
+                      height: "30px",
+                      border: "none",
+                      borderRadius: "10px",
+                      cursor: "pointer",
+                    }}
                     onClick={() => navigate(`/edit-seller/${id}`)}
                   >
-                    <Edit style={{marginRight:"10px"}}></Edit>  Update
+                    <Edit style={{ marginRight: "10px" }}></Edit> Update
                   </button>
                 </div>
               </div>
@@ -226,30 +260,34 @@ function SellerDashBoard() {
           {/* Stats Grid */}
           <div className="stats-grid">
             {/* Total Vehicles Sold */}
-            <div className="stat-card">
+            <div className="stat-card" data-testid="stat-card">
               <div className="stat-header">
                 <h3>Total Vehicles Sold</h3>
                 <Car className="stat-icon blue-icon" />
               </div>
-              <p className="stat-value">{stats.totalVehiclesSold}</p>
+              <p className="stat-value" data-testid="vehicles-sold">
+                {stats.totalVehiclesSold}
+              </p>
             </div>
 
             {/* Total Rentals */}
-            <div className="stat-card">
+            <div className="stat-card" data-testid="stat-card">
               <div className="stat-header">
                 <h3>Total Rentals</h3>
                 <Key className="stat-icon purple-icon" />
               </div>
-              <p className="stat-value">{stats.totalRentals}</p>
+              <p className="stat-value" data-testid="total-rentals">
+                {stats.totalRentals}
+              </p>
             </div>
 
             {/* Total Revenue */}
-            <div className="stat-card">
+            <div className="stat-card" data-testid="stat-card">
               <div className="stat-header">
                 <h3>Total Revenue</h3>
                 <DollarSign className="stat-icon gold-icon" />
               </div>
-              <p className="stat-value">
+              <p className="stat-value" data-testid="total-revenue">
                 ${stats.totalRevenue.toLocaleString()}
               </p>
             </div>
@@ -266,6 +304,7 @@ function SellerDashBoard() {
             </div>
             <br />
             <br />
+            {/* More Content/Charts Here */}
           </div>
         </div>
       </main>

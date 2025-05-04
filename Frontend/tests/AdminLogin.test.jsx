@@ -3,15 +3,22 @@ import AdminLogin from "../src/Admin/AdminLogin";
 import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
 import React from "react";
-// Mock react-router-dom's useNavigate
-const mockNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockNavigate,
-}));
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import '@testing-library/jest-dom';
+
+
+// Mock useNavigate from react-router-dom
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 // Mock axios
-jest.mock("axios");
+vi.mock("axios");
 
 const renderLogin = () =>
   render(
@@ -22,18 +29,18 @@ const renderLogin = () =>
 
 describe("AdminLogin Component", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    axios.post = jest.fn(); // Ensure axios.post is defined and mockable
+    vi.clearAllMocks();
+    axios.post = vi.fn();
   });
 
-  test("renders login form and rotating image", () => {
+  it("renders login form and rotating image", () => {
     renderLogin();
     expect(screen.getByPlaceholderText("Admin Email")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Enter your password")).toBeInTheDocument();
     expect(screen.getByText("Welcome Admin 👨‍💻")).toBeInTheDocument();
   });
 
-  test("updates input fields on change", () => {
+  it("updates input fields on change", () => {
     renderLogin();
 
     fireEvent.change(screen.getByPlaceholderText("Admin Email"), {
@@ -47,24 +54,22 @@ describe("AdminLogin Component", () => {
     expect(screen.getByDisplayValue("mypassword")).toBeInTheDocument();
   });
 
-  test("toggles password visibility when eye icon is clicked", () => {
+  it("toggles password visibility when eye icon is clicked", () => {
     renderLogin();
-  
+
     const passwordInput = screen.getByPlaceholderText("Enter your password");
     expect(passwordInput).toHaveAttribute("type", "password");
-  
-    // Find the button containing the eye icon and click it to toggle visibility
+
     const eyeIconButton = screen.getByRole("button", { name: /toggle password visibility/i });
-  
-    fireEvent.click(eyeIconButton); // First click should change input type to text
+
+    fireEvent.click(eyeIconButton);
     expect(passwordInput).toHaveAttribute("type", "text");
-  
-    fireEvent.click(eyeIconButton); // Second click should change input type back to password
+
+    fireEvent.click(eyeIconButton);
     expect(passwordInput).toHaveAttribute("type", "password");
   });
-  
 
-  test("shows error if email or password is missing", async () => {
+  it("shows error if email or password is missing", async () => {
     renderLogin();
 
     fireEvent.click(screen.getByRole("button", { name: /log in/i }));
@@ -83,7 +88,7 @@ describe("AdminLogin Component", () => {
     });
   });
 
-  test("logs in successfully and navigates to dashboard", async () => {
+  it("logs in successfully and navigates to dashboard", async () => {
     axios.post.mockResolvedValue({
       data: { token: "abc123", email: "admin@example.com" },
     });
@@ -107,7 +112,7 @@ describe("AdminLogin Component", () => {
     });
   });
 
-  test("shows error on failed login", async () => {
+  it("shows error on failed login", async () => {
     axios.post.mockRejectedValue({
       response: { data: { message: "Invalid credentials" } },
     });

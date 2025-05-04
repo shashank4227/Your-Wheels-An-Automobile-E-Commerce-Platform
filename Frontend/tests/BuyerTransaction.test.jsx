@@ -1,13 +1,20 @@
 import React from "react";
-import { render, screen, waitFor, fireEvent, within } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import BuyerTransaction from "../src/Buyer/BuyerTransaction";
 import axios from "axios";
+import { describe, it, afterEach, vi, expect } from "vitest";
+import '@testing-library/jest-dom';
+
 
 // Mock axios
-jest.mock("axios");
+vi.mock("axios", () => ({
+  default: {
+    get: vi.fn(),
+  },
+}));
 
-// Utility render with Router and route param
+// Utility render function with router
 const renderWithRouter = (ui, { route = "/transactions/123", path = "/transactions/:id" } = {}) => {
   return render(
     <MemoryRouter initialEntries={[route]}>
@@ -20,37 +27,26 @@ const renderWithRouter = (ui, { route = "/transactions/123", path = "/transactio
 
 describe("BuyerTransaction Component", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
-  
-  it("displays an error message when transactions fail to load", async () => {
-    // Mock API failure
-    axios.get.mockRejectedValue(new Error("Failed to load transactions"));
-
-    // Create a spy on console.error to ensure it gets called
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+  test("displays an error message when transactions fail to load", async () => {
+    axios.get.mockRejectedValueOnce(new Error("Network error"));
 
     render(
-      <MemoryRouter initialEntries={["/buyer-transactions/123"]}>
-        <Routes>
-          <Route path="/buyer-transactions/:id" element={<BuyerTransaction />} />
-        </Routes>
+      <MemoryRouter>
+        <BuyerTransaction />
       </MemoryRouter>
     );
 
-    // Wait for the error message to appear
     await waitFor(() => {
-      expect(screen.getByText(/Error loading transactions/i)).toBeInTheDocument();
+      expect(
+        screen.getByText((content, element) =>
+          element.textContent === "Error loading transactions"
+        )
+      ).toBeInTheDocument();
     });
-
-    // Verify that console.error was called
-    expect(consoleErrorSpy).toHaveBeenCalledWith("Error loading transactions");
-
-    // Restore console.error
-    consoleErrorSpy.mockRestore();
   });
-
   it("toggles subscription filter", async () => {
     const mockTransactions = [
       { _id: 1, type: "subscription", amount: 1000, createdAt: new Date(), status: "active" },
@@ -90,7 +86,6 @@ describe("BuyerTransaction Component", () => {
       </MemoryRouter>
     );
 
-    // Ensure both transactions are visible initially
     await waitFor(() => {
       expect(screen.getByText("Purchase")).toBeInTheDocument();
       expect(screen.getByText("Subscription")).toBeInTheDocument();
@@ -98,7 +93,6 @@ describe("BuyerTransaction Component", () => {
 
     const purchaseToggle = screen.getByRole("button", { name: /Show Purchases/i });
 
-    // Toggle off purchases
     fireEvent.click(purchaseToggle);
 
     await waitFor(() => {
@@ -135,18 +129,16 @@ describe("BuyerTransaction Component", () => {
       </MemoryRouter>
     );
 
-    // Ensure rental appears
     await waitFor(() => {
       expect(screen.getByText("Rental")).toBeInTheDocument();
     });
 
     const rentalToggle = screen.getByRole("button", { name: /Show Rentals/i });
-    fireEvent.click(rentalToggle); // Hide rentals
+    fireEvent.click(rentalToggle);
 
-    // Rental should no longer be present
     await waitFor(() => {
       expect(screen.queryByText("Rental")).not.toBeInTheDocument();
-      expect(screen.getByText("Purchase")).toBeInTheDocument(); // Confirm others remain
+      expect(screen.getByText("Purchase")).toBeInTheDocument();
     });
   });
 
@@ -159,12 +151,10 @@ describe("BuyerTransaction Component", () => {
 
     renderWithRouter(<BuyerTransaction />);
 
-    // Disable all filters
     fireEvent.click(screen.getByText(/Show Rentals/i));
     fireEvent.click(screen.getByText(/Show Purchases/i));
     fireEvent.click(screen.getByText(/Show Subscriptions/i));
 
-    // Wait and then check that no transaction-item elements are shown
     await waitFor(() => {
       expect(screen.queryByText(/Status:/i)).not.toBeInTheDocument();
     });

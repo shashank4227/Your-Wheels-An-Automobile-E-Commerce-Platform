@@ -3,6 +3,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import "./DashBoard.css";
 import { Mail, Calendar, IndianRupee,Edit } from "lucide-react";
 import SideBar from "./BuyerSideBar";
+import React from "react";
 import axios from "axios";
 import {
   Chart as ChartJS,
