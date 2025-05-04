@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import SellerDashBoard from "../src/Seller/SellerDashBoard";
+import SellerDashBoard from "../src/Seller/SellerDashboard";
 import axios from "axios";
 import { describe, test, beforeEach, vi, expect } from "vitest";
 import '@testing-library/jest-dom';
