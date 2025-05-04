@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminSideBar from "./AdminSideBar";
 import "./EditUser.css";
-
+import React from "react";
 const EditUser = () => {
   const { id: userId } = useParams(); // Get userId from URL
   const navigate = useNavigate();

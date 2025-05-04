@@ -4,6 +4,7 @@ const passport = require("./config/passport"); // Import Passport
 const connectDB = require("./config/db"); // Connect to DB
 require("dotenv").config();
 const path = require("path");
+const setupSwaggerDocs = require("./swagger");
 
 // Middlewares
 const rfs = require("rotating-file-stream");
@@ -102,6 +103,9 @@ app.use("/", SellerRoutes);
 app.use("/", PaymentRoutes);
 app.use("/", UserRoutes);
 app.use(AuthRoutes);
+
+// Your other middleware and routes
+setupSwaggerDocs(app);
 
 // Serve frontend in production
 if (process.env.NODE_ENV === "production") {

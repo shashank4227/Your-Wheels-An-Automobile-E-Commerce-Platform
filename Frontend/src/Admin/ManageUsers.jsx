@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import "./ManageUsers.css";
 import AdminSideBar from "./AdminSideBar";
+import React from "react";
 
 const AdminManageUsers = () => {
   const [users, setUsers] = useState([]);
