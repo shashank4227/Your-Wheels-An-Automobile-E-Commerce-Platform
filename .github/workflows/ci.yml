@@ -23,6 +23,11 @@ jobs:
         with:
           node-version: 18
 
+      - name: Create .env file
+        run: |
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+
       - name: Install Backend Dependencies
         run: npm i
 
@@ -47,8 +52,6 @@ jobs:
 
       - name: Install Frontend Dependencies
         run: npm i
-
-     
 
       - name: Build Frontend
         run: npm run build
