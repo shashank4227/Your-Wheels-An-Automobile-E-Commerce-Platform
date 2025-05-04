@@ -39,9 +39,15 @@ function Renting() {
     const fetchVehicles = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/rent-vehicles`);
-        setVehicles(response.data);
+        if (Array.isArray(response.data)) {
+          setVehicles(response.data);
+        } else {
+          console.error("API response is not an array:", response.data);
+          setVehicles([]); // Fallback to an empty array
+        }
       } catch (err) {
         console.error("Error fetching vehicles:", err);
+        setVehicles([]); // Fallback to an empty array
       }
     };
 
@@ -56,7 +62,6 @@ function Renting() {
     return endDate.toISOString().split("T")[0];
   };
   const endDate = calculateEndDate(startDate, rentalDuration);
-  
 
   // ✅ Handle renting a vehicle
   const handleRent = async (vehicleId, price) => {
@@ -65,16 +70,14 @@ function Renting() {
         vehicleId,
         price,
         startDate,
-         endDate, // ✅ Fixed endDate calculation
+        endDate, // ✅ Fixed endDate calculation
       },
     });
   };
-  
-  
 
   // ✅ Filter Options
-  const brands = [...new Set(vehicles.map((vehicle) => vehicle.brand))];
-  const colors = [...new Set(vehicles.map((vehicle) => vehicle.color))];
+  const brands = vehicles.length > 0 ? [...new Set(vehicles.map((vehicle) => vehicle.brand))] : [];
+  const colors = vehicles.length > 0 ? [...new Set(vehicles.map((vehicle) => vehicle.color))] : [];
 
   const filteredVehicles = vehicles.filter((vehicle) => {
     if (vehicleType !== "all" && vehicle.type !== vehicleType) return false;
@@ -87,26 +90,25 @@ function Renting() {
     if (
       searchQuery &&
       !vehicle.name.toLowerCase().includes(searchQuery.toLowerCase())
-    ) return false;
-  
+    )
+      return false;
+
     // ✅ Convert availableFrom and availableTo to Date objects for comparison
     const availableFrom = new Date(vehicle.availableFrom);
     const availableTo = new Date(vehicle.availableTo);
-  
+
     if (startDate) {
       const start = new Date(startDate);
       const end = new Date(calculateEndDate(startDate, rentalDuration));
-  
+
       // ✅ Inclusive range check using getTime()
       if (start.getTime() < availableFrom.getTime() || end.getTime() > availableTo.getTime()) {
         return false;
       }
     }
-  
+
     return true;
   });
-  
-  
 
   return (
     <div className="app">
@@ -258,7 +260,6 @@ function Renting() {
               >
                 <img
                   src={vehicle.imageUrl}
-
                   alt={vehicle.name}
                 />
                 <div className="vehicle-info">
@@ -272,9 +273,8 @@ function Renting() {
                     <span>Color: {vehicle.color}</span>
                   </div>
                   <div className="availability">
-                  <p>Available From: {new Date(vehicle.availableFrom).toLocaleDateString()}</p>
-<p>Available To: {new Date(vehicle.availableTo).toLocaleDateString()}</p>
-
+                    <p>Available From: {new Date(vehicle.availableFrom).toLocaleDateString()}</p>
+                    <p>Available To: {new Date(vehicle.availableTo).toLocaleDateString()}</p>
                   </div>
                   <div className="rental-price">
                     <p className="daily-rate">₹{vehicle.price}/day</p>
@@ -289,44 +289,42 @@ function Renting() {
                       </p>
                     )}
                   </div>
-                  <span>Rating: { vehicle.rating}</span>
+                  <span>Rating: {vehicle.rating}</span>
                   {vehicle.reviews && vehicle.reviews.length > 0 ? (
-                      <div className="sales-vehicle-reviews">
-                        <h3>Reviews:</h3>
-                        <br />
-                        {vehicle.reviews.map((review, index) => (
-                          <div key={index} className="sales-vehicle-review">
-                            <p>
-                              <strong>Buyer:</strong> {review.firstName}
-                            </p>
-                            <p>
-                              <strong>Comment:</strong> {review.comment}
-                            </p>
-                            <p>
-                              <strong>Rating:</strong> ⭐ {review.rating} / 5
-                            </p>
-                            <p>
-                              <strong>Reviewed on:</strong>{" "}
-                              {new Date(review.createdAt).toLocaleDateString()}
-                            </p>
-                            <br />
-                          </div>
-                          
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="sales-vehicle-description">
-                        No reviews yet
-                      </p>
-                    )}
+                    <div className="sales-vehicle-reviews">
+                      <h3>Reviews:</h3>
+                      <br />
+                      {vehicle.reviews.map((review, index) => (
+                        <div key={index} className="sales-vehicle-review">
+                          <p>
+                            <strong>Buyer:</strong> {review.firstName}
+                          </p>
+                          <p>
+                            <strong>Comment:</strong> {review.comment}
+                          </p>
+                          <p>
+                            <strong>Rating:</strong> ⭐ {review.rating} / 5
+                          </p>
+                          <p>
+                            <strong>Reviewed on:</strong>{" "}
+                            {new Date(review.createdAt).toLocaleDateString()}
+                          </p>
+                          <br />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="sales-vehicle-description">
+                      No reviews yet
+                    </p>
+                  )}
                   <button
                     className="rent-button"
                     disabled={
-                      // !startDate ||
                       new Date(startDate) < new Date(vehicle.availableFrom) ||
                       new Date(startDate) > new Date(vehicle.availableTo)
                     }
-                    onClick={() => handleRent(vehicle._id,vehicle.price)}
+                    onClick={() => handleRent(vehicle._id, vehicle.price)}
                   >
                     {!startDate ? "Select dates first" : "Rent Now"}
                   </button>
