@@ -22,7 +22,9 @@ describe("Auth Routes", () => {
       res.status(200).json({ success: true, message: "OTP sent" });
     });
 
-    const res = await request(app).post("/send-otp").send({ email: "test@example.com" });
+    const res = await request(app)
+      .post("/send-otp")
+      .send({ email: "test@example.com" });
 
     expect(res.statusCode).toBe(200);
     expect(res.body.message).toBe("OTP sent");
@@ -45,10 +47,14 @@ describe("Auth Routes", () => {
 
   test("POST /google - should trigger googleAuth", async () => {
     signupController.googleAuth.mockImplementation((req, res) => {
-      res.status(200).json({ success: true, message: "Google Auth successful" });
+      res
+        .status(200)
+        .json({ success: true, message: "Google Auth successful" });
     });
 
-    const res = await request(app).post("/google").send({ token: "fake_token" });
+    const res = await request(app)
+      .post("/google")
+      .send({ token: "fake_token" });
 
     expect(res.statusCode).toBe(200);
     expect(res.body.message).toBe("Google Auth successful");

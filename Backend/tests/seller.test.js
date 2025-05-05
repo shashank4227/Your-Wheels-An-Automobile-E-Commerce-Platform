@@ -200,36 +200,35 @@ describe("Seller API Routes", () => {
     expect(res.body.message).toBe("Vehicle deleted successfully");
   });
 
- 
   test("GET /seller-stats/:id should return seller stats", async () => {
     // Mock counts for SellVehicle and Vehicle
     SellVehicle.countDocuments = jest
       .fn()
       .mockResolvedValueOnce(5) // totalVehiclesSold
       .mockResolvedValueOnce(2); // totalVehiclesOnSale
-  
+
     Vehicle.countDocuments = jest
       .fn()
       .mockResolvedValueOnce(3) // totalRentals
       .mockResolvedValueOnce(1); // totalVehicleOnRent
-  
+
     // Mock Payment.aggregate
     Payment.aggregate = jest.fn().mockResolvedValue([{ total: 5000 }]);
-  
+
     const res = await request(app).get("/seller-stats/seller123");
-  
+
     expect(res.statusCode).toBe(200);
     expect(res.body.totalVehiclesSold).toBe(5);
     expect(res.body.totalVehiclesOnSale).toBe(2);
     expect(res.body.totalRentals).toBe(3);
     expect(res.body.totalVehicleOnRent).toBe(1);
     expect(res.body.totalRevenue).toBe(5000);
-  
+
     // Validate function call counts
     expect(SellVehicle.countDocuments).toHaveBeenCalledTimes(2);
     expect(Vehicle.countDocuments).toHaveBeenCalledTimes(2);
     expect(Payment.aggregate).toHaveBeenCalledTimes(1);
-  
+
     // Validate structure of Payment.aggregate call
     const aggregateArg = Payment.aggregate.mock.calls[0][0];
     expect(aggregateArg).toEqual([
@@ -243,18 +242,13 @@ describe("Seller API Routes", () => {
           _id: null,
           total: {
             $sum: {
-              $cond: [
-                { $eq: ["$type", "subscription"] },
-                0,
-                "$amount",
-              ],
+              $cond: [{ $eq: ["$type", "subscription"] }, 0, "$amount"],
             },
           },
         },
       },
     ]);
   });
-  
 
   test("GET /seller-stats/:id should handle server error", async () => {
     SellVehicle.countDocuments.mockRejectedValue(new Error("DB error"));

@@ -9,7 +9,7 @@ let isInitialized = false;
 const initializeRedis = async (options = {}) => {
   if (isInitialized) return redisClient;
 
-  isTestMode = options.testMode || process.env.NODE_ENV === 'test';
+  isTestMode = options.testMode || process.env.NODE_ENV === "test";
 
   if (isTestMode) {
     redisClient = {
@@ -18,7 +18,7 @@ const initializeRedis = async (options = {}) => {
       del: async () => {},
       keys: async () => [],
       quit: async () => {},
-      isMock: true
+      isMock: true,
     };
     isInitialized = true;
     return redisClient;
@@ -62,7 +62,7 @@ const getRedisClient = () => {
       setEx: async () => {},
       del: async () => {},
       keys: async () => [],
-      isMock: true
+      isMock: true,
     };
   }
   return redisClient;
@@ -76,5 +76,5 @@ module.exports = {
   initializeRedis,
   getRedisClient,
   isTestEnvironment,
-  isRedisReady
+  isRedisReady,
 };

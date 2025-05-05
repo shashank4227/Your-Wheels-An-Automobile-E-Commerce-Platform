@@ -29,19 +29,17 @@ describe("Payment Routes", () => {
   test("POST /payment - should process a buyer subscription payment", async () => {
     Buyer.findByIdAndUpdate.mockResolvedValue({});
 
-    const res = await request(app)
-      .post("/payment")
-      .send({
-        userId: "buyer123",
-        amount: 500,
-        billingPeriod: "monthly",
-        zipCode: "12345",
-        nameOnCard: "John Doe",
-        cardNumber: "4111111111111111",
-        expireDate: "12/25",
-        cvv: "123",
-        membershipType: "premium",
-      });
+    const res = await request(app).post("/payment").send({
+      userId: "buyer123",
+      amount: 500,
+      billingPeriod: "monthly",
+      zipCode: "12345",
+      nameOnCard: "John Doe",
+      cardNumber: "4111111111111111",
+      expireDate: "12/25",
+      cvv: "123",
+      membershipType: "premium",
+    });
 
     expect(res.statusCode).toBeGreaterThanOrEqual(200);
     expect(res.statusCode).toBeLessThan(500);
@@ -53,19 +51,17 @@ describe("Payment Routes", () => {
   test("POST /seller-payment - should process a seller subscription payment", async () => {
     Seller.findByIdAndUpdate.mockResolvedValue({});
 
-    const res = await request(app)
-      .post("/seller-payment")
-      .send({
-        sellerId: "seller123",
-        amount: 700,
-        billingPeriod: "monthly",
-        zipCode: "54321",
-        nameOnCard: "Jane Doe",
-        cardNumber: "4111111111111111",
-        expireDate: "11/26",
-        cvv: "456",
-        membershipType: "gold",
-      });
+    const res = await request(app).post("/seller-payment").send({
+      sellerId: "seller123",
+      amount: 700,
+      billingPeriod: "monthly",
+      zipCode: "54321",
+      nameOnCard: "Jane Doe",
+      cardNumber: "4111111111111111",
+      expireDate: "11/26",
+      cvv: "456",
+      membershipType: "gold",
+    });
 
     expect(res.statusCode).toBeGreaterThanOrEqual(200);
     expect(res.statusCode).toBeLessThan(500);
@@ -120,8 +116,4 @@ describe("Payment Routes", () => {
     expect(res.body.success).toBe(true);
     expect(res.body.transactionId).toBeDefined();
   });
-
- 
-
- 
 });

@@ -2,6 +2,8 @@
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -12,7 +14,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000", // Update if hosted elsewhere
+        url: BACKEND_URL, // Dynamically set based on environment variable
       },
     ],
   },

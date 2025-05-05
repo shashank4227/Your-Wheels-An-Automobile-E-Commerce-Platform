@@ -70,70 +70,67 @@ describe("Buyer API Tests", () => {
     expect(res.body.vehicles.length).toBeGreaterThan(0);
   });
 
-  
-  
   test("POST /rent-vehicle should return error if vehicle is already rented", async () => {
     Vehicle.findById = jest.fn().mockResolvedValue({
       _id: "v1",
       isRented: true,
-      save: jest.fn()
+      save: jest.fn(),
     });
-  
+
     const res = await request(app).post("/rent-vehicle").send({
       buyerId: "buyer123",
       vehicleId: "v1",
     });
-  
+
     expect(res.statusCode).toBe(400);
     expect(res.body.message).toBe("Vehicle is already rented");
   });
-  
+
   test("POST /buyer-memberships/:id should remove membership", async () => {
     const mockSave = jest.fn().mockResolvedValue();
     const mockBuyer = {
       _id: "buyer123",
       isMember: true,
       membershipType: "premium",
-      save: mockSave,  // ✅ mock the save method directly on the object
+      save: mockSave, // ✅ mock the save method directly on the object
     };
-  
+
     Buyer.findById = jest.fn().mockResolvedValue(mockBuyer);
-  
+
     const res = await request(app).post("/buyer-memberships/buyer123");
-  
+
     expect(res.statusCode).toBe(200);
     expect(res.body.message).toBe("Membership removed successfully");
-    expect(mockSave).toHaveBeenCalledTimes(1);  // ✅ check that save was called
-    expect(mockBuyer.isMember).toBe(false);     // ✅ confirm membership was removed
+    expect(mockSave).toHaveBeenCalledTimes(1); // ✅ check that save was called
+    expect(mockBuyer.isMember).toBe(false); // ✅ confirm membership was removed
     expect(mockBuyer.membershipType).toBe(null);
   });
-  
 
   test("PUT /buyer/:vehicleId/rating should add rating to vehicle", async () => {
     const vehicleId = "507f1f77bcf86cd799439011";
     const userId = "507f1f77bcf86cd799439012";
-  
+
     const mockVehicle = {
       _id: vehicleId,
       reviews: [],
       rating: 0,
       save: jest.fn().mockResolvedValue(),
     };
-  
+
     const mockBuyer = {
       _id: userId,
       firstName: "John",
     };
-  
+
     Vehicle.findById = jest.fn().mockResolvedValue(mockVehicle);
     Buyer.findById = jest.fn().mockResolvedValue(mockBuyer);
-  
+
     const res = await request(app).put(`/buyer/${vehicleId}/rating`).send({
       userId,
       rating: 5,
       comment: "Great car!",
     });
-  
+
     expect(res.statusCode).toBe(200);
     expect(res.body.message).toBe("Rating added successfully");
     expect(mockVehicle.reviews.length).toBe(1);
@@ -144,32 +141,30 @@ describe("Buyer API Tests", () => {
       comment: "Great car!",
     });
   });
-  
+
   test("GET /buyer-stats/:id should return buyer stats with correct revenue calculation", async () => {
-    const buyerId = "507f191e810c19729de860ea";  // Valid ObjectId string
-  
+    const buyerId = "507f191e810c19729de860ea"; // Valid ObjectId string
+
     SellVehicle.countDocuments = jest.fn().mockResolvedValue(5);
     Vehicle.countDocuments = jest.fn().mockResolvedValue(2);
     Payment.aggregate = jest.fn().mockResolvedValue([{ total: 10000 }]);
-  
+
     const res = await request(app).get(`/buyer-stats/${buyerId}`);
-  
+
     expect(res.statusCode).toBe(200);
     expect(res.body.totalVehiclesBought).toBe(5);
     expect(res.body.totalRentedVehicles).toBe(2);
     expect(res.body.totalRevenue).toBe(10000);
-  
+
     expect(Payment.aggregate).toHaveBeenCalled();
   });
-  
-  
+
   test("GET /buyer/:id should return 404 for non-existent buyer", async () => {
     Buyer.findById.mockResolvedValue(null);
-  
+
     const res = await request(app).get("/buyer/non-existent-id");
-  
+
     expect(res.statusCode).toBe(404);
     expect(res.body.msg).toBe("User not found"); // Update message here
   });
-  
 });
