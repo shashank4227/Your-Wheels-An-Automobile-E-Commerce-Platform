@@ -1,9 +1,56 @@
 const express = require("express");
+const authMiddleware = require("../middleware/authMiddleware");
+const cloudinary = require("../utils/cloudinary"); // Import Cloudinary configuration
+const router = express.Router();
+const streamifier = require("streamifier");
+
 const multer = require("multer");
 const path = require("path");
-const authMiddleware = require("../middleware/authMiddleware");
-const { cacheMiddleware, clearCache } = require("../middleware/cacheMiddleware");
-const cloudinary = require("../utils/cloudinary");
+
+
+// Set up multer storage to use memory storage (no disk save)
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+// Image upload route
+router.post("/upload", authMiddleware, upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: "No file uploaded" });
+  }
+
+  try {
+    // Upload image buffer directly to Cloudinary
+    const result = await cloudinary.uploader.upload_stream(
+      {
+        folder: "vehicle_images",  // Optional: Store in a specific folder
+        public_id: Date.now(),     // Optional: Set a custom public ID for the image
+      },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary Upload Error:", error);
+          return res.status(500).json({ success: false, message: "Error uploading image" });
+        }
+
+        // Respond with the Cloudinary URL
+        res.json({
+          success: true,
+          imageUrl: result.secure_url,  // URL of the uploaded image
+        });
+      }
+    );
+
+    // Push the buffer to the Cloudinary stream
+    const bufferStream = streamifier.createReadStream(req.file.buffer);
+    bufferStream.pipe(result);
+
+  } catch (error) {
+    console.error("Error uploading to Cloudinary:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+module.exports = router;
+
 
 // Import Seller Controllers
 const {
@@ -24,318 +71,193 @@ const {
 // Import Sell Vehicle Controllers (Second-hand vehicle sales)
 const sellVehicleController = require("../controllers/SellVehicle");
 
-const router = express.Router();
-
-// Set up storage for uploaded files
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Save files in 'uploads' folder
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); // Rename file
-  },
-});
-
 
 /* ==============================
    SELLER AUTHENTICATION ROUTES
    ============================== */
-router.post("/seller-signup", sellerSignUp);
-router.post("/seller-login", sellerLogin);
-router.get("/seller/:id", cacheMiddleware(3600), sellerId); // Cache seller profile for 1 hour
+router.post("/seller-signup", sellerSignUp); // Seller signup
+router.post("/seller-login", sellerLogin); // Seller login
+router.get("/seller/:id", sellerId); // Get seller by ID
 
 /* ==============================
-   IMAGE UPLOAD ROUTE
+   IMAGE UPLOAD ROUTE (Cloudinary Only)
    ============================== */
 
-   const { Readable } = require("stream");
-   const upload = multer({ storage: multer.memoryStorage() });
-   
-   router.post("/upload", authMiddleware, upload.single("file"), async (req, res) => {
-     if (!req.file) return res.status(400).json({ success: false, message: "No file uploaded" });
-   
-     try {
-       const streamUpload = (buffer) => {
-         return new Promise((resolve, reject) => {
-           const stream = cloudinary.uploader.upload_stream(
-             { folder: "your-wheels" },
-             (error, result) => {
-               if (result) resolve(result);
-               else reject(error);
-             }
-           );
-           Readable.from(buffer).pipe(stream);
-         });
-       };
-   
-       const result = await streamUpload(req.file.buffer);
-       res.json({ success: true, imageUrl: result.secure_url });
-     } catch (err) {
-       res.status(500).json({ success: false, message: "Upload failed", error: err.message });
-     }
-   });
-   
-   
 
 /* ==============================
    RENTAL VEHICLE MANAGEMENT ROUTES
    ============================== */
-// Clear vehicle cache when adding a new vehicle
-router.post(
-  "/vehicles/add", 
-  authMiddleware, 
-  clearCache("cache:*/vehicles/seller/*"),
-  addVehicle
-);
-
-// Cache seller vehicles for 5 minutes
-router.get(
-  "/vehicles/seller/:id", 
-  authMiddleware, 
-  cacheMiddleware(300, (req) => `cache:seller:${req.params.id}:vehicles`),
-  getSellerVehicles
-);
-
-// Cache vehicles on rent for 5 minutes
-router.get(
-  "/vehicles-on-rent/seller/:id", 
-  authMiddleware, 
-  cacheMiddleware(300, (req) => `cache:seller:${req.params.id}:vehicles-on-rent`),
-  getVehiclesOnRent
-);
-
-// Cache individual vehicle data for 10 minutes
-router.get(
-  "/vehicles/:id", 
-  authMiddleware, 
-  cacheMiddleware(600, (req) => `cache:vehicle:${req.params.id}`),
-  getVehicleById
-);
-
-// Clear vehicle caches when deleting a vehicle
-router.delete(
-  "/vehicles/:id", 
-  authMiddleware,
-  clearCache((req) => `cache:vehicle:${req.params.id}`),
-  clearCache("cache:*/vehicles/seller/*"),
-  deleteVehicle
-);
+router.post("/vehicles/add", authMiddleware, addVehicle); // Add vehicle for rent
+router.get("/vehicles/seller/:id", authMiddleware, getSellerVehicles); // Get all seller's rental vehicles
+router.get("/vehicles-on-rent/seller/:id", authMiddleware, getVehiclesOnRent); // Get all seller's rental vehicles
+router.get("/vehicles/:id", authMiddleware, getVehicleById); // Get single rental vehicle
+router.delete("/vehicles/:id", authMiddleware, deleteVehicle); // Delete rental vehicle
 
 /* ==============================
    SECOND-HAND VEHICLE SALES ROUTES
    ============================== */
-// Clear relevant caches when adding a vehicle for sale
 router.post(
   "/sellVehicles/add",
   authMiddleware,
-  clearCache("cache:sell/all"),
-  clearCache((req) => `cache:sell/seller:${req.body.sellerId || req.user.id}`),
   sellVehicleController.addVehicle
-);
-
-// Cache all vehicles for sale for 5 minutes
-router.get(
-  "/sell/all", 
-  cacheMiddleware(300, () => "cache:sell/all"),
-  sellVehicleController.getAllVehicles
-);
-
-// Cache specific sale vehicle for 10 minutes
-router.get(
-  "/sell/:id", 
-  cacheMiddleware(600, (req) => `cache:sell:${req.params.id}`),
-  sellVehicleController.getVehicleById
-);
-
-// Cache specific rent vehicle for 10 minutes
-router.get(
-  "/rent/:id", 
-  cacheMiddleware(600, (req) => `cache:rent:${req.params.id}`),
-  sellVehicleController.getRentVehicleById
-);
-
-// Clear caches when updating a vehicle for sale
+); // Add vehicle for sale
+router.get("/sell/all", sellVehicleController.getAllVehicles); // Get all vehicles for sale
+router.get("/sell/:id", sellVehicleController.getVehicleById); // Get specific sale vehicle
+router.get("/rent/:id", sellVehicleController.getRentVehicleById); // Get specific sale vehicle
 router.put(
   "/sell/update/:id",
   authMiddleware,
-  clearCache((req) => `cache:sell:${req.params.id}`),
-  clearCache("cache:sell/all"),
-  clearCache((req) => `cache:sell/seller:*`),
   sellVehicleController.updateVehicle
-);
-
-// Clear caches when deleting a vehicle for sale
+); // Update sale vehicle
 router.delete(
   "/sell/delete/:id",
   authMiddleware,
-  clearCache((req) => `cache:sell:${req.params.id}`),
-  clearCache("cache:sell/all"),
-  clearCache((req) => `cache:sell/seller:*`),
   sellVehicleController.deleteVehicle
-);
-
-// Cache seller's vehicles for sale for 5 minutes
+); // Delete sale vehicle
 router.get(
   "/sell/seller/:id",
   authMiddleware,
   sellVehicleController.getSellerVehiclesForSale
 );
-
-// Cache sold vehicles for 15 minutes
 router.get(
   "/sold/seller/:id",
   authMiddleware,
-  cacheMiddleware(900, (req) => `cache:sold/seller:${req.params.id}`),
   sellVehicleController.getSoldVehicles
 );
 
+/* ==============================
+   SELLER STATS ROUTE
+   ============================== */
 const Payment = require("../models/Payment");
 const Vehicle = require("../models/Vehicle");
 const SellVehicle = require("../models/SellVehicle");
 const mongoose = require("mongoose");
 
-// Cache seller stats for 10 minutes
-router.get(
-  "/seller-stats/:id", 
-  cacheMiddleware(600, (req) => `cache:seller:${req.params.id}:stats`),
-  async (req, res) => {
-    try {
-      const { id } = req.params;
+router.get("/seller-stats/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
 
-      const totalVehiclesSold = await SellVehicle.countDocuments({
-        sellerId: id,
-        isSold: true,
-      });
-      const totalVehiclesOnSale = await SellVehicle.countDocuments({
-        sellerId: id,
-        isSold: false,
-      });
-      const totalRentals = await Vehicle.countDocuments({
-        seller: id,
-        isRented: true,
-      });
-      const totalVehicleOnRent = await Vehicle.countDocuments({
-        seller: id,
-        isRented: false,
-      });
+    const totalVehiclesSold = await SellVehicle.countDocuments({
+      sellerId: id,
+      isSold: true,
+    });
+    const totalVehiclesOnSale = await SellVehicle.countDocuments({
+      sellerId: id,
+      isSold: false,
+    });
+    const totalRentals = await Vehicle.countDocuments({
+      seller: id,
+      isRented: true,
+    });
+    const totalVehicleOnRent = await Vehicle.countDocuments({
+      seller: id,
+      isRented: false,
+    });
 
-      // Example: Calculate total revenue from sales and rentals
-      console.log("Seller id: ", id);
-      const totalRevenue = await Payment.aggregate([
-        { $match: { sellerId: new mongoose.Types.ObjectId(id) } },
-        {
-          $group: {
-            _id: null,
-            total: {
-              $sum: {
-                $cond: [
-                  { $eq: ["$type", "subscription"] },
-                  0, // If it's a subscription, don't add to total
-                  "$amount", // If it's not a subscription, add the amount
-                ],
-              },
+    // Example: Calculate total revenue from sales and rentals
+    console.log("Seller id: ", id);
+    const totalRevenue = await Payment.aggregate([
+      { $match: { sellerId: new mongoose.Types.ObjectId(id) } },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: {
+              $cond: [
+                { $eq: ["$type", "subscription"] },
+                0, // If it's a subscription, don't add to total
+                "$amount", // If it's not a subscription, add the amount
+              ],
             },
           },
         },
-      ]);
+      },
+    ]);
 
-      res.json({
-        totalVehiclesSold,
-        totalRentals,
-        totalVehicleOnRent,
-        totalVehiclesOnSale,
-        totalRevenue: totalRevenue.length > 0 ? totalRevenue[0].total : 0,
-      });
-    } catch (error) {
-      // console.error("Error fetching stats:", error);
-      res.status(500).json({ error: "Failed to fetch stats" });
-    }
+    res.json({
+      totalVehiclesSold,
+      totalRentals,
+      totalVehicleOnRent,
+      totalVehiclesOnSale,
+      totalRevenue: totalRevenue.length > 0 ? totalRevenue[0].total : 0,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch stats" });
   }
-);
+});
 
+/* ==============================
+   SELLER MEMBERSHIP ROUTE
+   ============================== */
 const Seller = require("../models/Seller");
 
-// Clear seller cache when updating membership
-router.post(
-  "/seller-memberships/:id",
-  clearCache((req) => `cache:seller:${req.params.id}`),
-  clearCache((req) => `cache:seller:${req.params.id}:stats`),
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-      const user = await Seller.findById(id);
+router.post("/seller-memberships/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await Seller.findById(id);
 
-      if (!user) {
-        return res
-          .status(404)
-          .json({ success: false, message: "user not found" });
-      }
-      user.isMember = false;
-      user.membershipType = null;
-      await user.save();
-      res.json({ success: true, message: "Membership removed successfully" });
-    } catch (error) {
-      console.error("Error removing membership:", error);
-      res.status(500).json({ error: "Failed to remove membership" });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
+
+    user.isMember = false;
+    user.membershipType = null;
+    await user.save();
+
+    res.json({ success: true, message: "Membership removed successfully" });
+  } catch (error) {
+    console.error("Error removing membership:", error);
+    res.status(500).json({ error: "Failed to remove membership" });
   }
-);
+});
 
-// Clear sell vehicle cache on deletion
-router.delete(
-  "/sell/seller/:vehicleId",
-  clearCache((req) => `cache:sell:${req.params.vehicleId}`),
-  clearCache("cache:sell/all"),
-  clearCache("cache:sell/seller:*"),
-  async (req, res) => {
-    try {
-      const { vehicleId } = req.params;
+/* ==============================
+   DELETE VEHICLE ROUTES
+   ============================== */
+router.delete("/sell/seller/:vehicleId", async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
 
-      // Find the vehicle
-      const vehicle = await SellVehicle.findById(vehicleId);
-      if (!vehicle) {
-        console.log("Vehicle not found");
-        return res.status(404).json({ message: "Vehicle not found" });
-      }
-
-      // Delete the vehicle
-      await Vehicle.findByIdAndDelete(vehicleId);
-
-      res.json({ message: "Vehicle deleted successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Server Error", error: error.message });
+    // Find the vehicle
+    const vehicle = await SellVehicle.findById(vehicleId);
+    if (!vehicle) {
+      return res.status(404).json({ message: "Vehicle not found" });
     }
+
+    // Delete the vehicle
+    await SellVehicle.findByIdAndDelete(vehicleId);
+
+    res.json({ message: "Vehicle deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
-);
+});
 
-// Clear rent vehicle cache on deletion
-router.delete(
-  "/rent-vehicles/:vehicleId",
-  clearCache((req) => `cache:vehicle:${req.params.vehicleId}`),
-  clearCache((req) => `cache:rent:${req.params.vehicleId}`),
-  clearCache("cache:*/vehicles/seller/*"),
-  async (req, res) => {
-    try {
-      const { vehicleId } = req.params;
+router.delete("/rent-vehicles/:vehicleId", async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
 
-      // Find the vehicle in the database
-      const vehicle = await Vehicle.findById(vehicleId);
-      if (!vehicle) {
-        return res.status(404).json({ message: "Vehicle not found" });
-      }
-
-      // Delete the vehicle
-      await Vehicle.findByIdAndDelete(vehicleId);
-
-      res.json({ message: "Vehicle deleted successfully" });
-    } catch (error) {
-      console.error("Delete Error:", error);
-      res.status(500).json({ message: "Server Error", error: error.message });
+    // Find the vehicle in the database
+    const vehicle = await Vehicle.findById(vehicleId);
+    if (!vehicle) {
+      return res.status(404).json({ message: "Vehicle not found" });
     }
+
+    // Delete the vehicle
+    await Vehicle.findByIdAndDelete(vehicleId);
+
+    res.json({ message: "Vehicle deleted successfully" });
+  } catch (error) {
+    console.error("Delete Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
-);
+});
 
 module.exports = router;
+
+
 /**
  * @swagger
  * /seller-signup:

@@ -138,7 +138,8 @@ exports.getVehicleById = async (req, res) => {
     }
     console.log("✅ Vehicle ID Received:", id);
 
-    const vehicle = await SellVehicle.findById(id)
+    const vehicle = await SellVehicle.findById(id).populate('sellerId', 'email phoneNumber');
+
 
     console.log("✅ Vehicle fetched:", vehicle);
 

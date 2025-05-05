@@ -158,12 +158,13 @@ function Buying() {
           <div className="rental-container">
             <div className="vehicles-grid">
               {filteredVehicles.map((vehicle) => (
-                <div key={vehicle._id} className="vehicle-card" style={{backgroundColor: "black"}}>
+                <div key={vehicle._id} className="vehicle-card">
                   <img
                     src={vehicle.imageUrl}
                     alt={vehicle.name}
-                    onError={(e) => (e.target.src = "https://placehold.co/150")}
-
+                    onError={(e) =>
+                      (e.target.src = "https://via.placeholder.com/150")
+                    }
                   />
                   <div className="vehicle-info">
                     <h3>{vehicle.name}</h3>

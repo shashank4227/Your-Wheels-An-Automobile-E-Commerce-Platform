@@ -7,18 +7,6 @@ const Seller = require("../models/Seller");
 const Vehicle = require("../models/Vehicle");
 const mongoose = require("mongoose");
 
-const { getRedisClient, isTestEnvironment, isRedisReady } = require("../config/redis");
-
-const safeRedisOperation = async (operation) => {
-  try {
-    if (!isRedisReady() && !isTestEnvironment()) return null;
-    return await operation();
-  } catch (err) {
-    console.error("Redis operation failed:", err);
-    return null;
-  }
-};
-
 // Buyer Signup
 exports.buyerSignUp = async (req, res) => {
   const { firstName, lastName, email, password, terms } = req.body;
@@ -92,27 +80,10 @@ exports.buyerLogin = async (req, res) => {
   }
 };
 
-// ✅ Get Available Vehicles (with Redis cache)
+// ✅ Get Available Vehicles (without Redis cache)
 exports.getAvailableVehicles = async (req, res) => {
-  const cacheKey = "available_vehicles";
-
-  const cachedData = await safeRedisOperation(async () => {
-    const client = getRedisClient();
-    return await client.get(cacheKey);
-  });
-
-  if (cachedData) {
-    return res.status(200).json(JSON.parse(cachedData));
-  }
-
   try {
     const vehicles = await SellVehicle.find({ isSold: false });
-
-    await safeRedisOperation(async () => {
-      const client = getRedisClient();
-      await client.setEx(cacheKey, 3600, JSON.stringify({ success: true, vehicles }));
-    });
-
     res.status(200).json({ success: true, vehicles });
   } catch (error) {
     console.error("Error retrieving vehicles:", error);
@@ -136,19 +107,13 @@ exports.buyVehicle = async (req, res) => {
     await Payment.create({ userId: buyerId, amount: -amount });
     await Payment.create({ userId: vehicle.sellerId._id, amount });
 
-    // Clear relevant Redis keys
-    await safeRedisOperation(async () => {
-      const client = getRedisClient();
-      await client.del("available_vehicles");
-    });
-
     res.status(200).json({ success: true, message: "Purchase successful" });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error processing purchase", error });
   }
 };
 
-// ✅ Buyer bought vehicles (with cache)
+// ✅ Buyer bought vehicles
 exports.getBuyerBoughtVehicles = async (req, res) => {
   const { id } = req.params;
 
@@ -156,26 +121,8 @@ exports.getBuyerBoughtVehicles = async (req, res) => {
     return res.status(400).json({ success: false, message: "Invalid seller ID" });
   }
 
-  const cacheKey = `bought_vehicles_${id}`;
-
-  const cachedData = await safeRedisOperation(async () => {
-    const client = getRedisClient();
-    return await client.get(cacheKey);
-  });
-
-  if (cachedData) {
-    return res.status(200).json(JSON.parse(cachedData));
-  }
-
   try {
     const vehicles = await SellVehicle.find({ buyerId: id });
-    console.log("🚗 Vehicles bought by buyer:", vehicles);
-
-    await safeRedisOperation(async () => {
-      const client = getRedisClient();
-      await client.setEx(cacheKey, 3600, JSON.stringify({ success: true, vehicles }));
-    });
-
     res.status(200).json({ success: true, vehicles });
   } catch (error) {
     console.error("❌ Error fetching seller vehicles:", error);
@@ -183,7 +130,7 @@ exports.getBuyerBoughtVehicles = async (req, res) => {
   }
 };
 
-// ✅ Buyer rented vehicles (with cache)
+// ✅ Buyer rented vehicles
 exports.getBuyerRentedVehicles = async (req, res) => {
   const { id } = req.params;
 
@@ -191,25 +138,8 @@ exports.getBuyerRentedVehicles = async (req, res) => {
     return res.status(400).json({ success: false, message: "Invalid seller ID" });
   }
 
-  const cacheKey = `rented_vehicles_${id}`;
-
-  const cachedData = await safeRedisOperation(async () => {
-    const client = getRedisClient();
-    return await client.get(cacheKey);
-  });
-
-  if (cachedData) {
-    return res.status(200).json(JSON.parse(cachedData));
-  }
-
   try {
     const vehicles = await Vehicle.find({ buyer: id });
-
-    await safeRedisOperation(async () => {
-      const client = getRedisClient();
-      await client.setEx(cacheKey, 3600, JSON.stringify({ success: true, vehicles }));
-    });
-
     res.status(200).json({ success: true, vehicles });
   } catch (error) {
     console.error("❌ Error fetching rented vehicles:", error);

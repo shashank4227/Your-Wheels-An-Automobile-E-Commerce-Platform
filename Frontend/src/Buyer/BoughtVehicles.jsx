@@ -22,16 +22,13 @@ function BoughtVehicles() {
         }
 
         // ✅ Update API endpoint to fetch sold vehicles
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/buy/buyer/${id}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/buy/buyer/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
         const data = await response.json();
 
@@ -58,11 +55,9 @@ function BoughtVehicles() {
 
       <main className="main-content">
         <div className="sales-vehicle-list-container">
-          <br />
-          <br />
+          <br /><br />
           <h1 style={{ color: "white" }}>Your Bought Vehicles</h1>
-          <br />
-          <br />
+          <br /><br />
           {loading ? (
             <p className="sales-loading">Loading vehicles...</p>
           ) : error ? (
@@ -72,11 +67,7 @@ function BoughtVehicles() {
           ) : (
             <div className="sales-vehicles-grid">
               {vehicles.map((vehicle) => (
-                <div
-                  key={vehicle._id}
-                  className="sales-vehicle-card"
-                  style={{ backgroundColor: "black" }}
-                >
+                <div key={vehicle._id} className="sales-vehicle-card" style={{ backgroundColor: "black" }}>
                   <div className="sales-vehicle-image-container">
                     <img
                       src={vehicle.imageUrl}
@@ -96,32 +87,24 @@ function BoughtVehicles() {
                     <div className="sales-vehicle-details">
                       <div className="sales-detail-item">
                         <span className="sales-detail-label">Year:</span>
-                        <span className="sales-detail-value">
-                          {vehicle.year}
-                        </span>
+                        <span className="sales-detail-value">{vehicle.year}</span>
                       </div>
                       <br />
                       <div className="sales-detail-item">
                         <span className="sales-detail-label">Mileage:</span>
-                        <span className="sales-detail-value">
-                          {vehicle.mileage} km
-                        </span>
+                        <span className="sales-detail-value">{vehicle.mileage} km</span>
                       </div>
                       <br />
                       <div className="sales-detail-item">
                         <span className="sales-detail-label">Location:</span>
-                        <span className="sales-detail-value">
-                          {vehicle.location}
-                        </span>
+                        <span className="sales-detail-value">{vehicle.location}</span>
                       </div>
                       <br />
                       <div className="sales-detail-item">
                         <span className="sales-detail-label">Contact:</span>
-                        <span className="sales-detail-value">
-                          {vehicle.phoneNumber}
-                        </span>
+                        <span className="sales-detail-value">{vehicle.phoneNumber}</span>
                       </div>
-
+                      
                       <div className="sales-detail-item">
                         <span className="sales-detail-label">Price:</span>
                         <span className="sales-detail-value">
@@ -130,10 +113,8 @@ function BoughtVehicles() {
                       </div>
                     </div>
                     <div className="sales-detail-item">
-                      <span className="sales-detail-label">Email:</span>
-                      <span className="sales-detail-value">
-                        {vehicle.email}
-                      </span>
+                        <span className="sales-detail-label">Email:</span>
+                        <span className="sales-detail-value">{vehicle.email}</span>
                     </div>
                     <br />
                     <div className="sales-vehicle-tags">
