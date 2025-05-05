@@ -158,7 +158,7 @@ function Buying() {
           <div className="rental-container">
             <div className="vehicles-grid">
               {filteredVehicles.map((vehicle) => (
-                <div key={vehicle._id} className="vehicle-card">
+                <div key={vehicle._id} className="vehicle-card" style={{backgroundColor: "black"}}>
                   <img
                     src={vehicle.imageUrl}
                     alt={vehicle.name}
