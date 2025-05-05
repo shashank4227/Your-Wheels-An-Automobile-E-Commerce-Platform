@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import React from "react";
 
+//images path
 const images = ["/login-1.jpeg", "/login-3.jpeg", "/login-2.jpeg"];
 
 function AdminLogin() {
