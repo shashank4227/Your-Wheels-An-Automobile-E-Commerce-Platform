@@ -2,18 +2,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Seller = require("../models/Seller");
 
-const { getRedisClient, isTestEnvironment, isRedisReady } = require("../config/redis");
-
-const safeRedisOperation = async (operation) => {
-  try {
-    if (!isRedisReady() && !isTestEnvironment()) return null;
-    return await operation();
-  } catch (err) {
-    console.error("Redis operation failed:", err);
-    return null;
-  }
-};
-
 // ✅ Seller Signup
 exports.sellerSignUp = async (req, res) => {
   const { firstName, lastName, email, password, terms } = req.body;
@@ -52,30 +40,15 @@ exports.sellerSignUp = async (req, res) => {
   }
 };
 
-// ✅ Get Seller by ID (with Redis caching)
+// ✅ Get Seller by ID (no Redis caching)
 exports.sellerId = async (req, res) => {
   const { id } = req.params;
-  const cacheKey = `seller_${id}`;
-
-  const cachedData = await safeRedisOperation(async () => {
-    const client = getRedisClient();
-    return await client.get(cacheKey);
-  });
-
-  if (cachedData) {
-    return res.status(200).json(JSON.parse(cachedData));
-  }
 
   try {
     const user = await Seller.findById(id);
     if (!user) {
       return res.status(404).json({ success: false, msg: "User not found" });
     }
-
-    await safeRedisOperation(async () => {
-      const client = getRedisClient();
-      await client.setEx(cacheKey, 3600, JSON.stringify(user));
-    });
 
     res.status(200).json(user);
   } catch (error) {
