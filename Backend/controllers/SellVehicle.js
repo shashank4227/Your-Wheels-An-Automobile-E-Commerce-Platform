@@ -136,11 +136,11 @@ exports.getVehicleById = async (req, res) => {
         message: "Invalid vehicle ID",
       });
     }
+    console.log("✅ Vehicle ID Received:", id);
 
-    const vehicle = await SellVehicle.findById(id).populate(
-      "sellerId",
-      "name email"
-    );
+    const vehicle = await SellVehicle.findById(id)
+
+    console.log("✅ Vehicle fetched:", vehicle);
 
     if (!vehicle) {
       return res.status(404).json({
