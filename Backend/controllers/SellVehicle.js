@@ -285,7 +285,10 @@ exports.getSellerVehiclesForSale = async (req, res) => {
     const vehicles = await SellVehicle.find({
       sellerId: id,
       isSold: false,
-    }).populate("sellerId", "name email");
+    })
+
+    console.log("✅ Vehicles for seller:", vehicles);
+  
 
     res.status(200).json({
       success: true,

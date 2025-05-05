@@ -169,6 +169,7 @@ exports.getBuyerBoughtVehicles = async (req, res) => {
 
   try {
     const vehicles = await SellVehicle.find({ buyerId: id });
+    console.log("🚗 Vehicles bought by buyer:", vehicles);
 
     await safeRedisOperation(async () => {
       const client = getRedisClient();

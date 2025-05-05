@@ -4,7 +4,7 @@ const {
   getAvailableVehicles,
   buyVehicle,
   getBuyerBoughtVehicles,
-  getBuyerRentedVehicles
+  getBuyerRentedVehicles,
 } = require("../controllers/Buyer");
 const Vehicle = require("../models/Vehicle");
 const SellVehicle = require("../models/SellVehicle");
@@ -68,7 +68,9 @@ router.get("/rent/:vehicleId", authMiddleware, async (req, res) => {
     res.status(200).json({ success: true, vehicle });
   } catch (error) {
     console.error("Error fetching vehicle details:", error);
-    res.status(500).json({ success: false, message: "Failed to fetch vehicle details" });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch vehicle details" });
   }
 });
 router.get("/rent-vehicles", async (req, res) => {
@@ -110,28 +112,38 @@ router.get("/buyer-stats/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const totalVehiclesBought = await SellVehicle.countDocuments({ buyerId: id, isSold: true });
-    const totalRentedVehicles = await Vehicle.countDocuments({ buyer: id, isRented: true });
-    
+    const totalVehiclesBought = await SellVehicle.countDocuments({
+      buyerId: id,
+      isSold: true,
+    });
+    const totalRentedVehicles = await Vehicle.countDocuments({
+      buyer: id,
+      isRented: true,
+    });
+
     // Example: Calculate total revenue from sales and rentals
     const totalRevenue = await Payment.aggregate([
       { $match: { buyerId: new mongoose.Types.ObjectId(id) } },
-      { $group: { 
-        _id: null, 
-        total: { $sum: {
-          $cond: [
-            { $eq: ["$type", "subscription"] },
-            0,  // If it's a subscription, don't add to total
-            "$amount"  // If it's not a subscription, add the amount
-          ]
-        } }
-      } }
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: {
+              $cond: [
+                { $eq: ["$type", "subscription"] },
+                0, // If it's a subscription, don't add to total
+                "$amount", // If it's not a subscription, add the amount
+              ],
+            },
+          },
+        },
+      },
     ]);
 
     res.json({
       totalVehiclesBought,
       totalRentedVehicles,
-      totalRevenue: totalRevenue.length > 0 ? totalRevenue[0].total : 0
+      totalRevenue: totalRevenue.length > 0 ? totalRevenue[0].total : 0,
     });
   } catch (error) {
     console.error("Error fetching stats:", error);
@@ -147,7 +159,9 @@ router.post("/buyer-memberships/:id", async (req, res) => {
     const user = await Buyer.findById(id);
 
     if (!user) {
-      return res.status(404).json({ success: false, message: "user not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "user not found" });
     }
     user.isMember = false;
     user.membershipType = null;
@@ -202,15 +216,14 @@ router.put("/buyer/:vehicleId/rating", async (req, res) => {
     // ✅ Save updated vehicle
     await vehicle.save();
 
-    return res.status(200).json({ message: "Rating added successfully", vehicle });
+    return res
+      .status(200)
+      .json({ message: "Rating added successfully", vehicle });
   } catch (error) {
     console.error("🚨 Error adding rating:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
-
 
 module.exports = router;
 /**
@@ -339,7 +352,6 @@ module.exports = router;
  *       500:
  *         description: Internal server error
  */
-
 
 /**
  * @swagger

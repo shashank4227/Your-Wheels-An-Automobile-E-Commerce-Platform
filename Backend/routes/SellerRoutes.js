@@ -3,6 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const authMiddleware = require("../middleware/authMiddleware");
 const { cacheMiddleware, clearCache } = require("../middleware/cacheMiddleware");
+const cloudinary = require("../utils/cloudinary");
 
 // Import Seller Controllers
 const {
@@ -35,7 +36,6 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
 
 /* ==============================
    SELLER AUTHENTICATION ROUTES
@@ -47,14 +47,35 @@ router.get("/seller/:id", cacheMiddleware(3600), sellerId); // Cache seller prof
 /* ==============================
    IMAGE UPLOAD ROUTE
    ============================== */
-router.post("/upload", authMiddleware, upload.single("file"), (req, res) => {
-  if (!req.file) {
-    return res
-      .status(400)
-      .json({ success: false, message: "No file uploaded" });
-  }
-  res.json({ success: true, imageUrl: `/uploads/${req.file.filename}` });
-});
+
+   const { Readable } = require("stream");
+   const upload = multer({ storage: multer.memoryStorage() });
+   
+   router.post("/upload", authMiddleware, upload.single("file"), async (req, res) => {
+     if (!req.file) return res.status(400).json({ success: false, message: "No file uploaded" });
+   
+     try {
+       const streamUpload = (buffer) => {
+         return new Promise((resolve, reject) => {
+           const stream = cloudinary.uploader.upload_stream(
+             { folder: "your-wheels" },
+             (error, result) => {
+               if (result) resolve(result);
+               else reject(error);
+             }
+           );
+           Readable.from(buffer).pipe(stream);
+         });
+       };
+   
+       const result = await streamUpload(req.file.buffer);
+       res.json({ success: true, imageUrl: result.secure_url });
+     } catch (err) {
+       res.status(500).json({ success: false, message: "Upload failed", error: err.message });
+     }
+   });
+   
+   
 
 /* ==============================
    RENTAL VEHICLE MANAGEMENT ROUTES
@@ -157,7 +178,6 @@ router.delete(
 router.get(
   "/sell/seller/:id",
   authMiddleware,
-  cacheMiddleware(300, (req) => `cache:sell/seller:${req.params.id}`),
   sellVehicleController.getSellerVehiclesForSale
 );
 

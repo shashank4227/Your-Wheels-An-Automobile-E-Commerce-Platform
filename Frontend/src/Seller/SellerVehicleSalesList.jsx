@@ -23,13 +23,16 @@ function SellerVehicleSalesList() {
           return;
         }
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/sell/seller/${id}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/sell/seller/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         const data = await response.json();
 
@@ -50,18 +53,23 @@ function SellerVehicleSalesList() {
 
   // Function to handle vehicle deletion
   const handleDelete = async (vehicleId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this vehicle?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this vehicle?"
+    );
     if (!confirmDelete) return;
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/sell/seller/${vehicleId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/sell/seller/${vehicleId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const data = await response.json();
       if (!response.ok) {
@@ -69,7 +77,9 @@ function SellerVehicleSalesList() {
       }
 
       // Remove the deleted vehicle from UI
-      setVehicles((prevVehicles) => prevVehicles.filter((vehicle) => vehicle._id !== vehicleId));
+      setVehicles((prevVehicles) =>
+        prevVehicles.filter((vehicle) => vehicle._id !== vehicleId)
+      );
     } catch (err) {
       alert(err.message);
     }
@@ -96,7 +106,11 @@ function SellerVehicleSalesList() {
           ) : (
             <div className="sales-vehicles-grid">
               {vehicles.map((vehicle) => (
-                <div key={vehicle._id} className="sales-vehicle-card" style={{ backgroundColor: "black" }}>
+                <div
+                  key={vehicle._id}
+                  className="sales-vehicle-card"
+                  style={{ backgroundColor: "black" }}
+                >
                   <div className="sales-vehicle-image-container">
                     <img
                       src={vehicle.imageUrl}
@@ -116,29 +130,43 @@ function SellerVehicleSalesList() {
                     <div className="sales-vehicle-details">
                       <div className="sales-detail-item">
                         <span className="sales-detail-label">Year:</span>
-                        <span className="sales-detail-value">{vehicle.year}</span>
+                        <span className="sales-detail-value">
+                          {vehicle.year}
+                        </span>
                       </div>
                       <div className="sales-detail-item">
                         <span className="sales-detail-label">Mileage:</span>
-                        <span className="sales-detail-value">{vehicle.mileage} km</span>
+                        <span className="sales-detail-value">
+                          {vehicle.mileage} km
+                        </span>
                       </div>
                       <div className="sales-detail-item">
                         <span className="sales-detail-label">Location:</span>
-                        <span className="sales-detail-value">{vehicle.location}</span>
+                        <span className="sales-detail-value">
+                          {vehicle.location}
+                        </span>
                       </div>
                       <div className="sales-detail-item">
-                        <span className="sales-detail-label">Phone Number:</span>
-                        <span className="sales-detail-value">{vehicle.phoneNumber}</span>
+                        <span className="sales-detail-label">
+                          Phone Number:
+                        </span>
+                        <span className="sales-detail-value">
+                          {vehicle.phoneNumber}
+                        </span>
                       </div>
                       <div className="sales-detail-item">
                         <span className="sales-detail-label">Deposit:</span>
-                        <span className="sales-detail-value">₹{parseInt(vehicle.securityDeposit).toLocaleString()}</span>
+                        <span className="sales-detail-value">
+                          ₹{parseInt(vehicle.securityDeposit).toLocaleString()}
+                        </span>
                       </div>
                     </div>
 
                     <div className="sales-detail-item">
                       <span className="sales-detail-label">Email:</span>
-                      <span className="sales-detail-value">{vehicle.email}</span>
+                      <span className="sales-detail-value">
+                        {vehicle.email}
+                      </span>
                     </div>
                     <br />
                     <div className="sales-vehicle-tags">
@@ -147,8 +175,12 @@ function SellerVehicleSalesList() {
                       <span className="sales-tag">{vehicle.condition}</span>
                     </div>
 
-                    <p className="sales-vehicle-description">Description: {vehicle.description}</p>
-                    <p className="sales-vehicle-description">Features: {vehicle.features}</p>
+                    <p className="sales-vehicle-description">
+                      Description: {vehicle.description}
+                    </p>
+                    <p className="sales-vehicle-description">
+                      Features: {vehicle.features}
+                    </p>
 
                     <div className="sales-vehicle-price">
                       <span className="sales-price-currency">₹</span>
@@ -156,7 +188,10 @@ function SellerVehicleSalesList() {
                     </div>
 
                     {/* Delete Button */}
-                    <button className="delete-button" onClick={() => handleDelete(vehicle._id)}>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDelete(vehicle._id)}
+                    >
                       Delete
                     </button>
                   </div>
