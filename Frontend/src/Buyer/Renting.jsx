@@ -179,7 +179,7 @@ function Renting() {
               <input
                 type="range"
                 min="50"
-                max="1000"
+                max="100000"
                 step="10"
                 value={priceRange}
                 onChange={(e) => setPriceRange(Number(e.target.value))}
