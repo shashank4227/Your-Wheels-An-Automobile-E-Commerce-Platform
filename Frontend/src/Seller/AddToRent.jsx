@@ -183,7 +183,7 @@ function AddToRent() {
 
               <div className='form-group'>
                 <label htmlFor='price'>Daily Rental Rate (₹)</label>
-                <input type='number' id='price' name='price' value={formData.price} onChange={handleInputChange} required />
+                <input placeholder='Upto 1,00,000' type='number' id='price' name='price' value={formData.price} onChange={handleInputChange} required />
               </div>
 
               <div className='form-group'>
