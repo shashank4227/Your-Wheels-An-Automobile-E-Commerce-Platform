@@ -72,8 +72,8 @@ function AdminTransactions() {
         <br />
         <div className="hero">
           <History className="hero-icon" />
-          <h1 style={{ color: "white" }}>My Transactions</h1>
-          <p>Track your purchases, rentals, earnings, and spending</p>
+          <h1 style={{ color: "white" }}>Revenue Generation</h1>
+          <p>Track user's purchases, rentals, earnings, and spending</p>
         </div>
 
         {/* ✅ Summary Cards */}

@@ -119,7 +119,7 @@ function AdminSideBar({ activeLink, email }) {
             activeLink === `/admin-transactions/${email}` ? "active" : ""
           }
         >
-          <CreditCard size={20} /> Transactions
+          <CreditCard size={20} /> Revenue
         </li>
       </Link>
 
