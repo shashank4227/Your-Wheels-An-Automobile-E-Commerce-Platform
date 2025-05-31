@@ -2,7 +2,6 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const { initializeRedis, getRedisClient } = require("./config/redis");
 const setupSwaggerDocs = require("./swagger");
 const app = require("./app");
 
@@ -12,10 +11,6 @@ const startServer = async () => {
   let server;
 
   try {
-    // ✅ Initialize Redis before anything else
-    await initializeRedis();
-    console.log("✅ Redis initialized successfully");
-
     // ✅ Setup Swagger and other middlewares
     setupSwaggerDocs(app);
 
@@ -39,16 +34,6 @@ const startServer = async () => {
           console.log("✅ MongoDB connection closed.");
         } catch (err) {
           console.error("❌ Error closing MongoDB connection:", err);
-        }
-
-        try {
-          const redisClient = getRedisClient();
-          if (redisClient && !redisClient.isMock) {
-            await redisClient.quit();
-            console.log("✅ Redis connection closed.");
-          }
-        } catch (err) {
-          console.error("❌ Error closing Redis connection:", err);
         }
 
         process.exit(0);
