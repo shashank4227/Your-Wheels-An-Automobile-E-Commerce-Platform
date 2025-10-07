@@ -34,9 +34,7 @@ function BuyerSignup() {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
-  const [emailVerified, setEmailVerified] = useState(false);
+  // OTP flow removed
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -74,64 +72,13 @@ function BuyerSignup() {
     return true;
   };
 
-  const sendVerificationCode = async () => {
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      setErrorMessage("Enter a valid email before verifying.");
-      return;
-    }
-  
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/send-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email }),
-      });
-  
-      const data = await response.json();
-      if (data.success) {
-        setEmailSent(true);
-        setErrorMessage("");
-      } else {
-        setErrorMessage(data.error || "Failed to send OTP.");
-      }
-    } catch (error) {
-      setErrorMessage("Error sending OTP.");
-    }
-  };
-  
-  const verifyCode = async () => {
-    if (!verificationCode) {
-      setErrorMessage("Please enter the OTP.");
-      return;
-    }
-  
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/verify-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email, otp: verificationCode }),
-      });
-  
-      const data = await response.json();
-      if (data.success) {
-        setEmailVerified(true);  // ✅ Set emailVerified to true
-        setErrorMessage("");      // ✅ Clear any previous error message
-      } else {
-        setErrorMessage(data.error || "Invalid OTP.");
-      }
-    } catch (error) {
-      setErrorMessage("Error verifying OTP.");
-    }
-  };
+  // OTP send/verify removed
   const handleSubmit = async (e) => {
     e.preventDefault();
   
     if (!validateForm()) return;
   
-    if (!emailVerified) {
-      setErrorMessage("Please verify your email before signing up.");
-      return;
-    }
+    // Email verification removed
   
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/buyer-signup`, {
@@ -311,19 +258,9 @@ function BuyerSignup() {
 
       <div className="email-container">
         <input type="email" name="email" className="input-field" placeholder="Email" value={formData.email} onChange={handleChange} />
-        <button type="button" className="verify-email-btn" onClick={sendVerificationCode} disabled={emailSent}>
-          {emailSent ? "OTP Sent" : "Verify Email"}
-        </button>
       </div>
 
-      {emailSent && (
-        <div className="email-container">
-          <input type="text" className="input-field" placeholder="Enter OTP" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
-          <button type="button"  className="verify-email-btn" onClick={verifyCode} disabled={!verificationCode}>
-            Verify OTP
-          </button>
-        </div>
-      )}
+      {/* OTP inputs removed */}
 
       <div className="password-container">
         <input type={showPassword ? "text" : "password"} name="password" className="input-field password-input" placeholder="Enter your password" value={formData.password} onChange={handleChange} />
@@ -345,12 +282,10 @@ function BuyerSignup() {
 </div>
 
       {errorMessage && <p className="error-message">{errorMessage}</p>}
-{emailSent && !emailVerified && <p style={{color:"blueviolet"}}>OTP sent successfully!</p>}
-{emailVerified && <p style={{color:"blueviolet"}}>OTP verified successfully! 🎉</p>}
 
 
 <br />
-      <button type="submit" className="create-account-btn" disabled={!emailVerified}>
+      <button type="submit" className="create-account-btn">
         Create account
       </button>
 

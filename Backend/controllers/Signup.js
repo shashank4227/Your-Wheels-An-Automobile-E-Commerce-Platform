@@ -142,95 +142,11 @@ async function sendEmailViaResend(mailOptions) {
   }
 }
 
-// 📩 Send OTP Controller
-exports.sendotp = async (req, res) => {
-  const startTs = new Date().toISOString();
-  console.log(`[OTP] ${startTs} - Received send-otp request`);
-  const { email } = req.body;
-  if (!email) {
-    console.warn("[OTP] Validation failed: missing email in request body");
-    return res.status(400).json({ error: "Email is required" });
-  }
-  console.log(`[OTP] Using email: ${email}`);
+// 📩 Send OTP Controller (removed)
+// exports.sendotp = async (req, res) => { /* removed by request */ };
 
-  // Remove any old OTP for the same email
-  delete otpStorage[email];
-  console.log("[OTP] Cleared any existing OTP for this email (if present)");
-
-  const otp = Math.floor(100000 + Math.random() * 900000);
-  otpStorage[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // 5 mins expiry
-  console.log(
-    `[OTP] Generated OTP and stored with expiry at ${new Date(
-      otpStorage[email].expiresAt
-    ).toISOString()}`
-  );
-  if (process.env.NODE_ENV !== "production") {
-    console.log(`[OTP] (dev) OTP value: ${otp}`);
-  }
-
-  const mailOptions = {
-    from: process.env.GMAIL_USER,
-    to: email,
-    subject: "Your OTP Code",
-    text: `Your OTP is: ${otp}. It expires in 5 minutes.`,
-  };
-  console.log("[OTP] Mail options prepared (from, to, subject)");
-  try {
-    const tOpts = transporter && transporter.options ? transporter.options : {};
-    console.log(
-      `[OTP] Preparing to send via host=${tOpts.host || "?"} port=${
-        tOpts.port || "?"
-      } secure=${String(tOpts.secure)}`
-    );
-
-    await sendEmailWithFallback(mailOptions);
-    console.log(
-      `[OTP] Email dispatch success to ${email} at ${new Date().toISOString()}`
-    );
-    if (process.env.NODE_ENV !== "production") {
-      console.log(`📨 (dev) OTP sent to ${email}: ${otp}`);
-    }
-    res.json({ success: true, msg: "OTP sent successfully!" });
-  } catch (error) {
-    const now = new Date().toISOString();
-    const code = error && error.code ? error.code : "-";
-    const respCode = error && error.responseCode ? error.responseCode : "-";
-    const command = error && error.command ? error.command : "-";
-    console.error(
-      `❌ [OTP] ${now} - sendMail failed: message="${
-        error && error.message ? error.message : error
-      }" code=${code} responseCode=${respCode} command=${command}`
-    );
-    if (process.env.NODE_ENV !== "production") {
-      console.error("[OTP] Full error:", error);
-    }
-    res.status(500).json({ error: "Failed to send OTP. Try again later." });
-  }
-};
-
-// ✅ Verify OTP Controller
-exports.verifyotp = (req, res) => {
-  const { email, otp } = req.body;
-  if (!email || !otp)
-    return res.status(400).json({ error: "Email & OTP required" });
-
-  const storedOtp = otpStorage[email];
-  if (!storedOtp) {
-    return res.status(400).json({ error: "No OTP found. Request a new one." });
-  }
-
-  if (Date.now() > storedOtp.expiresAt) {
-    delete otpStorage[email];
-    return res.status(400).json({ error: "OTP expired. Request a new one." });
-  }
-
-  if (String(storedOtp.otp) === String(otp)) {
-    delete otpStorage[email];
-    return res.json({ success: true, msg: "OTP verified successfully!" });
-  } else {
-    return res.status(400).json({ error: "Invalid OTP. Please try again." });
-  }
-};
+// ✅ Verify OTP Controller (removed)
+// exports.verifyotp = (req, res) => { /* removed by request */ };
 
 // 🌐 Google Authentication
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
