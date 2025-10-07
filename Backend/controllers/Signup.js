@@ -8,6 +8,10 @@ const User = require("../models/User"); // ✅ adjust this path as needed
 // 🧠 Temporary in-memory OTP storage (consider Redis for production)
 const otpStorage = {};
 
+// HTTP email provider (Resend) config — avoids outbound SMTP restrictions
+const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
+const RESEND_FROM = process.env.RESEND_FROM || process.env.GMAIL_USER || "";
+
 // ✅ Gmail Transporter Configuration (App Password required)
 // Prefer STARTTLS on 587 first; many hosts block port 465.
 const transporter = nodemailer.createTransport({
@@ -25,14 +29,18 @@ const transporter = nodemailer.createTransport({
   socketTimeout: 15000,
 });
 
-// ✅ Optional SMTP connection check on server start
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("❌ SMTP Connection Failed:", error.message);
-  } else {
-    console.log("✅ SMTP Server Ready to send emails");
-  }
-});
+// ✅ Optional SMTP connection check on server start (skip if using HTTP provider)
+if (!RESEND_API_KEY) {
+  transporter.verify((error, success) => {
+    if (error) {
+      console.error("❌ SMTP Connection Failed:", error.message);
+    } else {
+      console.log("✅ SMTP Server Ready to send emails");
+    }
+  });
+} else {
+  console.log("✉️  Using HTTP email provider (Resend) — skipping SMTP verification");
+}
 
 // Helper to detect timeout-style errors
 function isTimeoutError(err) {
@@ -47,6 +55,20 @@ function isTimeoutError(err) {
 
 // Send with fallback: try 587 STARTTLS → 465 SSL → 2525 (if supported)
 async function sendEmailWithFallback(mailOptions) {
+  // If HTTP provider is configured, try that first to bypass blocked SMTP egress
+  if (RESEND_API_KEY) {
+    try {
+      console.log("[OTP] Attempting HTTP email via Resend API");
+      await sendEmailViaResend(mailOptions);
+      return;
+    } catch (httpErr) {
+      console.warn(
+        `[OTP] Resend API failed: ${httpErr && httpErr.message ? httpErr.message : httpErr}. Falling back to SMTP...`
+      );
+      // proceed to SMTP fallback chain
+    }
+  }
+
   try {
     return await transporter.sendMail(mailOptions);
   } catch (primaryErr) {
@@ -89,6 +111,34 @@ async function sendEmailWithFallback(mailOptions) {
 
       return await t2525.sendMail(mailOptions);
     }
+  }
+}
+
+// Send email using Resend HTTP API
+async function sendEmailViaResend(mailOptions) {
+  const { from, to, subject, text } = mailOptions;
+  if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
+  const apiUrl = "https://api.resend.com/emails";
+
+  const payload = {
+    from: RESEND_FROM || from,
+    to: Array.isArray(to) ? to : [to],
+    subject,
+    text,
+  };
+
+  const res = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Resend API error: ${res.status} ${body}`);
   }
 }
 
