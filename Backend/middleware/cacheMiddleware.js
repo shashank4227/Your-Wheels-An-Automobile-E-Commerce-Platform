@@ -13,6 +13,7 @@ const safeRedisOperation = async (operation) => {
     return null;
   }
 };
+//cache
 
 const cacheMiddleware = (ttl = 3600, keyGenerator) => {
   return async (req, res, next) => {
