@@ -9,15 +9,20 @@ const User = require("../models/User"); // ✅ adjust this path as needed
 const otpStorage = {};
 
 // ✅ Gmail Transporter Configuration (App Password required)
+// Prefer STARTTLS on 587 first; many hosts block port 465.
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 465,               // ✅ SSL port for production
-  secure: true,            // ✅ must be true for port 465
+  port: 587,
+  secure: false,            // STARTTLS
+  requireTLS: true,
   auth: {
     user: process.env.GMAIL_USER,         // e.g. yourwheels123@gmail.com
     pass: process.env.GMAIL_APP_PASSWORD, // generated app password
   },
-  connectionTimeout: 10000, // 10 seconds timeout
+  family: 4,                // prefer IPv4
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 15000,
 });
 
 // ✅ Optional SMTP connection check on server start
@@ -28,6 +33,64 @@ transporter.verify((error, success) => {
     console.log("✅ SMTP Server Ready to send emails");
   }
 });
+
+// Helper to detect timeout-style errors
+function isTimeoutError(err) {
+  if (!err) return false;
+  const msg = String(err.message || err).toLowerCase();
+  return (
+    msg.includes("timeout") ||
+    msg.includes("etimedout") ||
+    msg.includes("connection timeout")
+  );
+}
+
+// Send with fallback: try 587 STARTTLS → 465 SSL → 2525 (if supported)
+async function sendEmailWithFallback(mailOptions) {
+  try {
+    return await transporter.sendMail(mailOptions);
+  } catch (primaryErr) {
+    if (!isTimeoutError(primaryErr)) throw primaryErr;
+    console.warn("[OTP] Primary SMTP (587 STARTTLS) timed out. Trying 465 SSL...");
+
+    const t465 = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+      family: 4,
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
+    });
+
+    try {
+      return await t465.sendMail(mailOptions);
+    } catch (sslErr) {
+      if (!isTimeoutError(sslErr)) throw sslErr;
+      console.warn("[OTP] 465 SSL also timed out. Trying port 2525 if open...");
+
+      const t2525 = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 2525, // Note: Gmail may not accept 2525; works for providers like SendGrid/Mailgun
+        secure: false,
+        auth: {
+          user: process.env.GMAIL_USER,
+          pass: process.env.GMAIL_APP_PASSWORD,
+        },
+        family: 4,
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000,
+      });
+
+      return await t2525.sendMail(mailOptions);
+    }
+  }
+}
 
 // 📩 Send OTP Controller
 exports.sendotp = async (req, res) => {
@@ -70,7 +133,7 @@ exports.sendotp = async (req, res) => {
       } secure=${String(tOpts.secure)}`
     );
 
-    await transporter.sendMail(mailOptions);
+    await sendEmailWithFallback(mailOptions);
     console.log(
       `[OTP] Email dispatch success to ${email} at ${new Date().toISOString()}`
     );
