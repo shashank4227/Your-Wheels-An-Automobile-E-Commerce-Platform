@@ -9,46 +9,23 @@ require("dotenv").config();
 const otpStorage = {}; // Temporary storage for OTPs
 
 
-// Email transporter setup (configurable via environment variables)
-const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
-const SMTP_PORT = Number(process.env.SMTP_PORT || (process.env.NODE_ENV === "production" ? 465 : 587));
-const SMTP_SECURE = process.env.SMTP_SECURE
-  ? String(process.env.SMTP_SECURE).toLowerCase() === "true"
-  : SMTP_PORT === 465; // secure on 465, STARTTLS on 587
-const SMTP_USER = process.env.SMTP_USER || "";
-const SMTP_PASS = process.env.SMTP_PASS || "";
-const SMTP_FROM = process.env.SMTP_FROM || SMTP_USER || "";
-
+// Email transporter setup
 const transporter = nodemailer.createTransport({
-  host: SMTP_HOST,
-  port: SMTP_PORT,
-  secure: SMTP_SECURE,
-  auth: SMTP_USER && SMTP_PASS ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
-  pool: true,
-  maxConnections: 5,
-  maxMessages: 100,
-  tls: SMTP_SECURE
-    ? undefined
-    : {
-        // allow STARTTLS; don't reject self-signed in non-production only
-        rejectUnauthorized: process.env.NODE_ENV === "production",
-      },
-});
-
-// Optional: verify transporter on startup (non-blocking)
-transporter.verify((err) => {
-  if (err) {
-    console.error("Email transporter verification failed:", err.message);
-  } else {
-    console.log("Email transporter ready (", SMTP_HOST, ":", SMTP_PORT, ")");
-  }
+  host: "smtp.gmail.com",
+  port: 587, // ✅ Port for TLS
+  secure: false, // ✅ false for TLS
+  auth: {
+    user: "yourwheels123@gmail.com",
+    pass: "fjbd wpjz xhqa ezoa", // ✅ Use App Password (2FA required)
+  },
+  tls: {
+    rejectUnauthorized: false, // ✅ Allow self-signed certificates
+  },
 });
 
 // Send OTP Controller
 exports.sendotp = async (req, res) => {
-  if (process.env.NODE_ENV !== "production") {
-    console.log("Sending OTP...");
-  }
+  console.log("Sending OTP...");
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: "Email is required" });
 
@@ -59,7 +36,7 @@ exports.sendotp = async (req, res) => {
   otpStorage[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 };
 
   const mailOptions = {
-    from: SMTP_FROM || "no-reply@yourwheels.app",
+    from: "yourwheels123@gmail.com",
     to: email,
     subject: "Your OTP Code",
     text: `Your OTP is: ${otp}. This code will expire in 5 minutes.`,
@@ -67,21 +44,11 @@ exports.sendotp = async (req, res) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    if (process.env.NODE_ENV !== "production") {
-      console.log(`OTP sent to ${email}: ${otp}`);
-    } else {
-      console.log(`OTP email dispatched to ${email}`);
-    }
+    console.log(`OTP sent to ${email}: ${otp}`);
     res.json({ success: true, msg: "OTP sent successfully!" });
   } catch (error) {
-    const isAuthError =
-      error && (String(error.message).includes("Invalid login") || String(error.message).includes("authentication"));
-    const responseMessage = isAuthError
-      ? "Email service authentication failed. Please contact support."
-      : "Failed to send OTP. Try again later.";
-
-    console.error("Error sending OTP:", error && error.message ? error.message : error);
-    res.status(500).json({ error: responseMessage });
+    console.error("Error sending OTP:", error.message);
+    res.status(500).json({ error: "Failed to send OTP. Try again later." });
   }
 };
 
