@@ -42,5 +42,8 @@ jobs:
           file: ./Frontend/Dockerfile.prod
           push: ${{ github.event_name != 'pull_request' }}
           tags: shashank4227/your-wheels-frontend:latest
+          build-args: |
+            VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}
+            VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
