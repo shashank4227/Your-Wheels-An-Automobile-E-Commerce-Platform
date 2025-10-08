@@ -1,0 +1,35 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Backend image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./Backend
+          file: ./Backend/Dockerfile.prod
+          push: true
+          tags: shashank4227/your-wheels-backend:latest
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./Frontend
+          file: ./Frontend/Dockerfile.prod
+          push: true
+          tags: shashank4227/your-wheels-frontend:latest
