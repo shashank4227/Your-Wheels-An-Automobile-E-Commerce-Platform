@@ -1,36 +1,21 @@
-# ------------------------------------
-# Stage 1: Build the React Application
-# ------------------------------------
-    FROM node:16-alpine as builder
+# Stage 1: Build
+FROM node:18-alpine AS builder
 
-    # 1. ADD ARG INSTRUCTIONS TO ACCEPT BUILD ARGUMENTS
-    # These ARG instructions tell Docker to expect variables passed from GitHub Actions.
-    ARG VITE_BACKEND_URL
-    ARG VITE_GOOGLE_CLIENT_ID
-    
-    WORKDIR /app
-    
-    # Copy package.json and install dependencies
-    COPY package.json ./
-    RUN npm install
-    
-    # 2. SET ENVIRONMENT VARIABLES (Crucial for React Build)
-    # React (and Vite/CRA) requires environment variables to be explicitly set 
-    # with the VITE_/REACT_APP_ prefix before the 'npm run build' command.
-    ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
-    ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
-    
-    # Copy the source code
-    COPY . .
-    
-    # Run the production build command
-    RUN npm run build
-    
-    # ------------------------------------
-    # Stage 2: Serve the Static Application
-    # ------------------------------------
-    FROM nginx:stable-alpine as final
-    # Copy the compiled static files from the builder stage
-    COPY --from=builder /app/build /usr/share/nginx/html
-    EXPOSE 80
-    CMD ["nginx", "-g", "daemon off;"]
+ARG VITE_BACKEND_URL
+ARG VITE_GOOGLE_CLIENT_ID
+
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+
+COPY . .
+RUN npm run build
+
+# Stage 2: Serve
+FROM nginx:stable-alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
