@@ -44,6 +44,8 @@ jobs:
 
       - name: Run Backend Tests
         run: npm test
+        env:
+          NODE_ENV: test
 
   frontend:
     name: Frontend Test & Build
