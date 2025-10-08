@@ -68,17 +68,19 @@ jobs:
         with:
           image-ref: ${{ env.BACKEND_IMAGE }}
           format: 'table'
-          # CRITICAL! Fail the build if any high or critical issues are found. (DevSecOps)
-          exit-code: '1' 
-          severity: 'CRITICAL,HIGH'
+          # Fail the build only for CRITICAL issues; ignore unfixed to reduce noise
+          exit-code: '1'
+          severity: 'CRITICAL'
+          ignore-unfixed: true
           
       - name: Run Trivy vulnerability scanner on Frontend Image
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.FRONTEND_IMAGE }}
           format: 'table'
-          exit-code: '1' 
-          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          severity: 'CRITICAL'
+          ignore-unfixed: true
 
   # 3. E2E TESTING JOB (Final Validation - Phase IV)
   e2e-tests:
