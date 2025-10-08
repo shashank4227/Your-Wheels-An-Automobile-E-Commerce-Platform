@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "cy:run": "cypress run"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
@@ -48,6 +49,7 @@
     "@vitejs/plugin-react": "^4.4.1",
     "@vitest/ui": "^3.1.2",
     "babel-jest": "^29.7.0",
+    "cypress": "^15.4.0",
     "eslint": "^9.19.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.0.0",
