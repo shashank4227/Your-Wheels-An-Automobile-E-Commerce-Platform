@@ -39,6 +39,14 @@ describe("Seller API Routes", () => {
     process.env.JWT_SECRET = "mock-secret";
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
   // Seller Auth
   test("POST /seller-signup should register a new seller", async () => {
     Seller.findOne.mockResolvedValue(null);

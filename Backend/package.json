@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --setupFilesAfterEnv=./jest.setup.js --detectOpenHandles --forceExit",
+    "test:coverage": "jest --coverage --setupFilesAfterEnv=./jest.setup.js --detectOpenHandles --forceExit"
   },
   "keywords": [],
   "author": "",
@@ -39,5 +40,12 @@
   "devDependencies": {
     "jest": "^29.7.0",
     "supertest": "^7.1.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": ["./jest.setup.js"],
+    "testTimeout": 10000,
+    "detectOpenHandles": true,
+    "forceExit": true
   }
 }

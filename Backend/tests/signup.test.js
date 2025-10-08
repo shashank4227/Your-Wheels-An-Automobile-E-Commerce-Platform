@@ -17,9 +17,17 @@ describe("Auth Routes", () => {
     jest.clearAllMocks();
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
   // OTP routes removed by request
 
-  test("POST /google - should trigger googleAuth", async () => {
+  test("POST /google-auth - should trigger googleAuth", async () => {
     signupController.googleAuth.mockImplementation((req, res) => {
       res
         .status(200)
@@ -27,7 +35,7 @@ describe("Auth Routes", () => {
     });
 
     const res = await request(app)
-      .post("/google")
+      .post("/google-auth")
       .send({ token: "fake_token" });
 
     expect(res.statusCode).toBe(200);

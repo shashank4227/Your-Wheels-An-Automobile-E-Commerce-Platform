@@ -63,19 +63,22 @@ userSchema.methods.comparePassword = async function (password) {
 };
 
 // ✅ Remove old single-field index on `email` if it exists
-mongoose.connection.once("open", async () => {
-  try {
-    const collection = mongoose.connection.db.collection("users");
-    const indexes = await collection.indexes();
-    const oldEmailIndex = indexes.find(index => index.name === "email_1");
-    if (oldEmailIndex) {
-      await collection.dropIndex("email_1");
-      console.log("✅ Old unique index on email removed");
+// Only run this in non-test environments to avoid connection issues
+if (process.env.NODE_ENV !== "test") {
+  mongoose.connection.once("open", async () => {
+    try {
+      const collection = mongoose.connection.db.collection("users");
+      const indexes = await collection.indexes();
+      const oldEmailIndex = indexes.find(index => index.name === "email_1");
+      if (oldEmailIndex) {
+        await collection.dropIndex("email_1");
+        console.log("✅ Old unique index on email removed");
+      }
+    } catch (err) {
+      console.error("Error dropping old index:", err.message);
     }
-  } catch (err) {
-    console.error("Error dropping old index:", err.message);
-  }
-});
+  });
+}
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
