@@ -1,0 +1,240 @@
+/* App Layout */
+.app {
+    display: flex;
+    min-height: 100vh;
+    background-color: #0f172a;
+  }
+  
+  .sidebar {
+    flex: 0 0 250px;
+  }
+  
+  .main-content {
+    flex: 1;
+    padding: 2rem;
+  }
+  
+  /* Sales Vehicle List Container */
+  .sales-vehicle-list-container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .sales-vehicle-list-container h1 {
+    font-size: 2.5rem;
+    color:white;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    text-align: center;
+    
+  }
+  
+  /* Sales Vehicle Grid */
+  .sales-vehicles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2rem;
+  }
+  
+  /* Sales Vehicle Card */
+  .sales-vehicle-card {
+    background: #1e293b;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #334155;
+    position: relative;
+  }
+  
+  .sales-vehicle-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    border-color: #3b82f6;
+  }
+  
+  /* Vehicle Image Container */
+  .sales-vehicle-image-container {
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+  }
+  
+  .sales-vehicle-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .sales-vehicle-card:hover .sales-vehicle-image {
+    transform: scale(1.05);
+  }
+  
+  /* Vehicle Content */
+  .sales-vehicle-content {
+    padding: 1.5rem;
+    background-color: black;
+  }
+  
+  .sales-vehicle-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .sales-vehicle-title {
+    font-size: 1.5rem;
+    color: #f8fafc;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .sales-vehicle-type {
+    display: inline-block;
+    background: #3b82f6;
+    color: #fff;
+    padding: 0.25rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  
+  /* Vehicle Details Grid */
+  .sales-vehicle-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .sales-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .sales-detail-label {
+    color: #94a3b8;
+    font-size: 0.875rem;
+  }
+  
+  .sales-detail-value {
+    color: #e2e8f0;
+    font-weight: 500;
+  }
+  
+  /* Tags Section */
+  .sales-vehicle-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .sales-tag {
+    background: #334155;
+    color: #e2e8f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  /* Price Section */
+  .sales-vehicle-price {
+    font-size: 1.75rem;
+    color: #34d399;
+    font-weight: 700;
+    margin: 1rem 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+  }
+  
+  .sales-price-currency {
+    font-size: 1rem;
+    color: #94a3b8;
+  }
+  
+  /* Description */
+  .sales-vehicle-description {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Loading and Error States */
+  .sales-loading, .sales-error {
+    text-align: center;
+    padding: 2rem;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    background: #1e293b;
+    border-radius: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .sales-error {
+    color: #ef4444;
+    border: 1px solid #ef4444;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .sales-vehicles-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .app {
+      flex-direction: column;
+    }
+    
+    .sidebar {
+      flex: none;
+      width: 100%;
+    }
+    
+    .main-content {
+      padding: 1rem;
+    }
+    
+    .sales-vehicle-list-container h1 {
+      font-size: 2rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .sales-vehicles-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .sales-vehicle-details {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .delete-button {
+    background-color: red;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .delete-button:hover {
+    background-color: darkred;
+  }
+  
