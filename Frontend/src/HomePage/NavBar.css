@@ -1,9 +1,4 @@
-*{
-    padding: 0;
-    margin: 0;
-    
-    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-}
+/* Global reset removed to allow Tailwind/base styles to take precedence */
 .navbar{
     display: flex;
     justify-content:space-around;
@@ -22,7 +17,7 @@
 .navbar-links a,.navbar-links button{
     text-decoration: none;
     color:rgb(150, 150, 150);
-    /* font-weight: bold; */
+    font-weight: 700;
 
 }
 .navbar-links button{
@@ -39,20 +34,14 @@
     border-radius: 5px;
     color: white;
     padding: 10px 20px;
-    font-weight: bold;
-    background: linear-gradient(270deg,black,black, rgb(78, 78, 78),rgb(78, 78, 78),black,black);
-    background-size: 500% 500%;
-    animation: gradientFlow 6s infinite linear;
-    position: relative;
-    overflow: hidden;
+    background-color: #333; /* Dark grey instead of complex gradient */
     cursor: pointer;
-    transition: all 1s ease-in-out;
+    transition: all 0.3s ease;
 }
 
-/* Keyframes for smooth, river-like gradient flow */
-@keyframes gradientFlow {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
+.navbar-buttons .signup-btn:hover {
+    background-color: #555;
+    transform: translateY(-2px);
 }
 
 
@@ -61,11 +50,12 @@
     border-radius: 5px;
     color: white;
     background-color: black;
-    font-weight: bold;
+    font-weight: 700;
     cursor: pointer;
     padding: 10px 20px;
     margin-left: 10px;
     border:1px solid white;
+    font-size: small;
 }
 .navbar-buttons button:hover{
     color: white;
