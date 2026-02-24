@@ -1,0 +1,180 @@
+/* Payment Details Styles */
+.membership-payment-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    padding: 20px;
+  }
+  
+  .membership-plan-details {
+    background: #000;
+    padding: 40px;
+    color: white;
+    position: relative;
+  }
+  
+  .membership-plan-details::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 48%, rgba(255,255,255,0.1) 50%, transparent 52%);
+    background-size: 20px 20px;
+    z-index: 1;
+  }
+  
+  .membership-standard-plan {
+    background: white;
+    padding: 24px;
+    margin-bottom: 24px;
+    color: black;
+  }
+  
+  .membership-off-badge {
+    display: inline-block;
+    background: black;
+    color: white;
+    padding: 4px 8px;
+    margin-left: 8px;
+    font-size: 14px;
+  }
+  
+  .membership-price {
+    font-size: 48px;
+    font-weight: bold;
+    margin: 16px 0 8px;
+  }
+  
+  .membership-price-details {
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .membership-modify-plan {
+    display: flex;
+    align-items: center;
+    color: black;
+    text-decoration: none;
+    margin-top: 16px;
+  }
+  
+  .membership-total-section {
+    background: white;
+    padding: 24px;
+    color: black;
+  }
+  
+  .membership-total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  
+  .membership-total-row.membership-final-row {
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  
+  /* Payment Form Styles */
+  .membership-payment-form {
+    padding: 20px;
+  }
+  
+  .membership-form-group {
+    margin-bottom: 24px;
+  }
+  
+  .membership-form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .membership-billing-options {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .membership-radio-option {
+    flex: 1;
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .membership-radio-option.membership-selected {
+    border-color: black;
+    background: #f8f8f8;
+  }
+  
+  .membership-form-row {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .membership-form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .membership-form-select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    font-size: 16px;
+  }
+  
+  .membership-pay-button {
+    width: 100%;
+    padding: 16px;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+  
+  .membership-alternative-payments {
+    text-align: center;
+  }
+  
+  .membership-alt-pay-text {
+    color: #666;
+    margin-bottom: 16px;
+  }
+  
+  .membership-alt-pay-buttons {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .membership-alt-pay-button {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+  }
+  .error-text{
+    color:red;
+  }

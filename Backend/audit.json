@@ -1,0 +1,16 @@
+{
+    "keepSettings": {
+        "type": 2,
+        "amount": 10
+    },
+    "auditFilename": "audit.json",
+    "hashType": "md5",
+    "extension": "",
+    "files": [
+        {
+            "date": 1741624791933,
+            "name": "C:\\Users\\MUDAVATH SHASHANK\\OneDrive\\Desktop\\Study Related\\Web Dev Projects\\Your Wheels 2.0\\backend\\logs\\access-2025-03-10.log",
+            "hash": "163e4d752109d85ed55ecf562ea4ee4d"
+        }
+    ]
+}

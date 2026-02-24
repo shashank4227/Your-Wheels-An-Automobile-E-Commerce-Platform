@@ -1,0 +1,177 @@
+/* Services Section */
+.services-container {
+  background-color: black;
+  padding: 5rem 1rem;
+}
+
+.services-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.services-title {
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  margin-bottom: 3rem;
+}
+
+/* Slider */
+.slider-container {
+  position: relative;
+  overflow: hidden;
+  padding: 0 4rem;
+}
+
+.slider-track {
+  display: flex;
+  gap: 1.5rem;
+  transition: transform 0.5s ease-in-out;
+}
+
+/* Service Cards */
+.service-card {
+  flex: 0 0 calc(33% - 1rem);
+  background-color: rgb(22, 22, 22);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.3s ease, opacity 0.8s ease;
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.service-card:hover {
+  transform: scale(1.05);
+}
+
+/* When the card is visible */
+.service-card.fade-in-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Icons */
+.icon-container {
+  background-color: #353535;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: white;
+}
+
+/* Titles & Descriptions */
+.service-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.service-description {
+  color: #9ca3af;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* Fade-in Animation */
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Navigation Buttons */
+.nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgb(43, 43, 43);
+  color: white;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: #5a5a5a;
+}
+
+.prev-button {
+  left: 0;
+}
+
+.next-button {
+  right: 0;
+}
+
+/* Slider Indicators */
+.slider-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.indicator {
+  width: 2rem;
+  height: 0.25rem;
+  border-radius: 9999px;
+  background-color: #4b5563;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.indicator.active {
+  background-color: white;
+}
+
+/* Services Title - Fade-In Effect */
+.services-title {
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  margin-bottom: 3rem;
+  opacity: 0; /* Initially hidden */
+  transform: translateY(30px); /* Move down slightly */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.description {
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  margin-bottom: 3rem;
+  opacity: 0; /* Initially hidden */
+  transform: translateY(30px); /* Move down slightly */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* When title enters the viewport */
+.services-title.fade-in-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
