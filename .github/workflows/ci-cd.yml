@@ -1,0 +1,111 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  # Define the actual tags being used (for consistency across jobs)
+  BACKEND_IMAGE: shashank4227/your-wheels-backend:latest
+  FRONTEND_IMAGE: shashank4227/your-wheels-frontend:latest
+  # RENDER_URL is the live endpoint for E2E testing (Set as a GitHub Secret)
+  RENDER_URL: ${{ secrets.RENDER_LIVE_URL }}
+
+jobs:
+  # 1. BUILD AND PUSH JOB (Containerization + CI)
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        # Only logs in and pushes on 'push' events (not on PRs)
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Backend
+          file: ./Backend/Dockerfile.prod
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.BACKEND_IMAGE }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Frontend
+          file: ./Frontend/Dockerfile.prod
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.FRONTEND_IMAGE }}
+          build-args: |
+            VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}
+            VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # 2. SECURITY SCAN JOB (DevSecOps Gate - Phase IV)
+  scan-images:
+    runs-on: ubuntu-latest
+    needs: build-and-push # Must run after images are built
+    if: github.event_name != 'pull_request' # Only scan the final production images pushed to the registry
+    steps:
+      - name: Run Trivy vulnerability scanner on Backend Image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.BACKEND_IMAGE }}
+          format: 'table'
+          # Fail the build only for CRITICAL issues; ignore unfixed to reduce noise
+          exit-code: '1'
+          severity: 'CRITICAL'
+          ignore-unfixed: true
+          
+      - name: Run Trivy vulnerability scanner on Frontend Image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.FRONTEND_IMAGE }}
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL'
+          ignore-unfixed: true
+
+  # 3. E2E TESTING JOB (Final Validation - Phase IV)
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: scan-images # Only runs if images are secure
+    # This runs on a successful push to main (assuming Render deploys automatically)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Wait for Render Deployment to be Ready
+        # This checks the live site health before running tests (E2E requirement)
+        run: |
+          echo "Waiting for site to stabilize at ${{ env.RENDER_URL }}"
+          # Use curl with --fail to ensure a 200/300 status code after retrying 10 times
+          curl -s -o /dev/null -w "%{http_code}" --retry 10 --retry-delay 5 --fail "${{ env.RENDER_URL }}" || (echo "Deployment failed health check." && exit 1)
+      
+      - name: Run Cypress E2E Tests
+        uses: cypress-io/github-action@v5
+        with:
+          # Assumes Cypress tests and dependencies are located in the Frontend directory
+          working-directory: ./Frontend
+          spec: 'cypress/e2e/**/*.cy.js' 
+          browser: chrome
+        env:
+          # Passes the live URL to Cypress 
+          CYPRESS_BASE_URL: ${{ env.RENDER_URL }}

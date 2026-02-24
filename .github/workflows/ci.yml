@@ -1,0 +1,78 @@
+name: Fullstack CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Create .env file for Backend
+        run: |
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+          echo "GOOGLE_REDIRECT_URI_BUYER=${{ secrets.GOOGLE_REDIRECT_URI_BUYER }}" >> .env
+          echo "GOOGLE_REDIRECT_URI_SELLER=${{ secrets.GOOGLE_REDIRECT_URI_SELLER }}" >> .env
+          echo "BACKEND_URL=${{ secrets.BACKEND_URL }}" >> .env
+          echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> .env
+          echo "ALLOWED_ADMINS=${{ secrets.ALLOWED_ADMINS }}" >> .env
+          echo "CLOUD_NAME=${{ secrets.CLOUD_NAME }}" >> .env
+          echo "CLOUD_API_KEY=${{ secrets.CLOUD_API_KEY }}" >> .env
+          echo "CLOUD_API_SECRET=${{ secrets.CLOUD_API_SECRET }}" >> .env
+
+      - name: Install Backend Dependencies
+        run: npm i
+
+      - name: Run Backend Tests
+        run: npm test
+        env:
+          NODE_ENV: test
+
+  frontend:
+    name: Frontend Test & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Create .env file for Frontend
+        run: |
+          echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}" >> .env
+          echo "VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}" >> .env
+
+      - name: Install Frontend Dependencies
+        run: npm i
+
+      - name: Run Frontend Tests
+        run: npm test
+
+      - name: Build Frontend
+        run: npm run build

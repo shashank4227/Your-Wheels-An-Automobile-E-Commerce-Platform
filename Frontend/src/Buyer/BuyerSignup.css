@@ -1,0 +1,299 @@
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #1a1a1a;
+  }
+  
+  
+  .form-section {
+    flex: 1;
+    background-color: #1a1a1a;
+    padding: 2rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .back-link {
+    display: flex;
+    align-items: center;
+    color: #a8a8a8;
+    text-decoration: none;
+  }
+  
+  .form-container {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  .form-header {
+    margin-bottom: 2rem;
+  }
+  
+  .form-header h1 {
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .form-header p {
+    color: #a8a8a8;
+    margin: 0;
+  }
+  
+  .form-header a {
+    color: #8b5cf6;
+    text-decoration: none;
+  }
+  
+  .name-inputs {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .input-field {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    padding: 0.8rem 1rem;
+    border-radius: 0.5rem;
+    color: white;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .input-field::placeholder {
+    color: #a8a8a8;
+  }
+  
+  .terms {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .terms input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  
+  .terms label {
+    color: #a8a8a8;
+    font-size: 0.9rem;
+  }
+  
+  .terms a {
+    color: #8b5cf6;
+    text-decoration: none;
+  }
+  
+  .create-account-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #8b5cf6;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 2rem;
+  }
+  
+  .create-account-btn:hover {
+    background-color: #7c3aed;
+  }
+  
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    color: #a8a8a8;
+  }
+  
+  .divider::before,
+  .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: #333;
+  }
+  
+  .social-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .social-btn {
+    flex: 1;
+    padding: 0.8rem;
+    background-color: transparent;
+    border: 1px solid #333;
+    border-radius: 0.5rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .social-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  .role-selector {
+    margin-bottom: 1rem;
+  }
+  
+  .role-selector label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .dropdown {
+    background-color: rgba(255, 255, 255, 0.1);
+    width: 100%;
+    color: white;
+    padding: 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border 0.3s ease-in-out;
+    border: none;
+  }
+  
+  .dropdown:focus {
+    outline: none;
+  }
+  
+  .dropdown option {
+    background-color: #1a1a1a;
+    color: white;
+  }
+  .error-message {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .password-input {
+    width: 100%;
+    padding-right: 45px; /* Increased padding for the eye icon */
+  }
+  
+  .eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 45%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color:white;
+    font-size: 22px; /* Increased icon size */
+  }/* Email verification button */
+  .verify-email-btn {
+    background-color: blueviolet;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: fit-content;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    transition: background 0.3s;
+  }
+  
+  
+  
+  /* Input field for verification code */
+  .verification-input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  /* Verify code button */
+  .verify-code-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    width: 100%;
+    transition: background 0.3s;
+  }
+  
+  .verify-code-btn:hover {
+    background-color: #218838;
+  }
+  
+  /* Disable signup button until email is verified */
+  .create-account-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  /* Error message styling */
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  /* Email input container */
+  .email-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  /* Email input field */
+  .email-box .email-field {
+    flex: 1;
+    padding: 10px 12px;
+    padding-right: 100px; /* Space for the button */
+    border-radius: 5px;
+    font-size: 14px;
+    height: 30px;
+  }
+  
+  /* Verify Email button inside the field */
+  .verify-email-btn {
+    position: absolute;
+    right: 5px;
+    top: 35%;
+    transform: translateY(-50%);
+    background-color: blueviolet; /* Purple color */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s;
+  }
+  
+  .verify-email-btn:hover {
+    background-color: #530a9b;
+  }
+  
+  h2{
+    color:white;
+  }

@@ -1,0 +1,68 @@
+/* Container */
+.edit-user-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Form */
+.edit-user-form {
+    background-color: #2a2a2a;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 100%;
+}
+
+/* Labels */
+.edit-user-form label {
+    display: block;
+    margin-bottom: 1.5rem;
+    color: #e0e0e0;
+}
+
+/* Inputs & Select */
+.edit-user-form input,
+.edit-user-form select {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background-color: #333333;
+    border: 1px solid #404040;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+/* Focus States */
+.edit-user-form input:focus,
+.edit-user-form select:focus {
+    outline: none;
+    border-color: #3a7abd;
+    box-shadow: 0 0 0 2px rgba(58, 122, 189, 0.2);
+}
+
+/* Button */
+.edit-user-form button {
+    background-color: #3a7abd;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.edit-user-form button:hover {
+    background-color: #2c5c91;
+}
+
+.edit-user-form button:active {
+    transform: translateY(1px);
+}

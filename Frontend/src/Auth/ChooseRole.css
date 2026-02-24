@@ -1,0 +1,136 @@
+.role-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    padding: 2rem;
+  }
+  
+  .role-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .role-header h1 {
+    font-size: 3.5rem;
+    color: white;
+    margin-bottom: 1rem;
+  }
+  
+  .role-header p {
+    font-size: 1.2rem;
+    color: rgb(200,200,200);
+  }
+  
+  .role-cards {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  
+  .role-card {
+    background: rgb(20,20,20);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    cursor: pointer;
+    border: 3px solid transparent;
+  }
+  
+  .role-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  .role-card.selected {
+    border-color: #4299e1;
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  .role-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    color: #4299e1;
+  }
+  
+  .role-card h2 {
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 1rem;
+  }
+  
+  .role-card p {
+    color: #718096;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  
+  .role-button {
+    background: #4299e1;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .role-button:hover {
+    background: #3182ce;
+  }
+  
+  .confirm-button {
+    background: #48bb78;
+    color: white;
+    border: none;
+    padding: 1rem 3rem;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+  }
+  
+  .confirm-button:hover {
+    background: #38a169;
+    transform: translateY(-2px);
+  }
+  
+  .confirm-button:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .dashboard-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f7fafc;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .dashboard-container h1 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard-container p {
+    color: #4a5568;
+    font-size: 1.2rem;
+  }

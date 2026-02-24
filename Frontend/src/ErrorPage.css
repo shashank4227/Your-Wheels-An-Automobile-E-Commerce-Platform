@@ -1,0 +1,106 @@
+.error-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    color: #f3f4f6;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 1rem;
+  }
+  
+  .error-container {
+    max-width: 600px;
+    width: 100%;
+    background-color: black;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    text-align: center;
+  }
+  
+  .error-icon {
+    color: #ef4444;
+    margin-bottom: 1.5rem;
+    animation: pulse 2s infinite;
+  }
+  
+  .error-code {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    background: black;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .error-message {
+    font-size: 1.125rem;
+    color: #9ca3af;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+  
+  .error-stack {
+    background-color: #374151;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .error-stack summary {
+    color: #d1d5db;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .error-stack pre {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0;
+    padding: 0.5rem 0;
+  }
+  
+  .error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  .error-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #374151;
+    color: #f3f4f6;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .error-button:hover {
+    background-color: #4b5563;
+    transform: translateY(-2px);
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }

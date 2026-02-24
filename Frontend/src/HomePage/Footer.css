@@ -1,0 +1,119 @@
+/* Footer container */
+.footer-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+  }
+  
+  /* Footer styling */
+  .footer {
+    background-color: #0b0b0b;
+    color: #d1d5db;
+    padding: 20px 0;
+    position: relative;
+    width: 100%;
+  }
+  
+  /* Upper footer section */
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px;
+    gap: 40px;
+  }
+  
+  /* Left half (About section) */
+  .footer-left {
+    margin-left: 250px;
+    width: 50%;
+    color: #d1d5db;
+    margin-right: 200px;
+  }
+  
+  .footer-left h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  
+  .footer-left p {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  
+  /* Right half (Contact section) */
+  .footer-right {
+    width: 50%;
+    color: #d1d5db;
+  }
+  
+  .footer-right h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  
+  .footer-links {
+    margin-top: 12px;
+  }
+  
+  .footer-link {
+    color: #d1d5db;
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .footer-link:hover {
+    color: #fff;
+  }
+  
+  .footer-phone {
+    display: flex;
+    align-items: center;
+  }
+  
+  .footer-phone span {
+    margin-left: 8px;
+  }
+  
+  /* Footer Icons */
+  .footer-links .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+  }
+  
+  /* Bottom footer section */
+  .footer-bottom {
+    border-top: 1px solid #2d2d2d;
+    padding: 16px 24px;
+    text-align: center;
+  }
+  
+  .footer-bottom-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 12px;
+  }
+  
+  .footer-bottom-links a {
+    color: #d1d5db;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .footer-bottom-links a:hover {
+    color: #fff;
+  }
+  
+  /* Footer text */
+  .footer-text {
+    margin-bottom: 12px;
+    font-size: 0.875rem;
+  }
+  
