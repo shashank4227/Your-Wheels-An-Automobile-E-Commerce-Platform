@@ -71,7 +71,7 @@ jobs:
       - name: Install Frontend Dependencies
         run: |
           rm -rf node_modules package-lock.json
-          npm i
+          npm install
 
       - name: Run Frontend Tests
         run: npm test
