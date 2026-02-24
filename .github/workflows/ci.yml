@@ -69,7 +69,9 @@ jobs:
           echo "VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}" >> .env
 
       - name: Install Frontend Dependencies
-        run: npm i
+        run: |
+          rm -rf node_modules package-lock.json
+          npm i
 
       - name: Run Frontend Tests
         run: npm test
