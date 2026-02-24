@@ -31,8 +31,8 @@ function About() {
 
     return (
         <div className='body'>
-            <div className="info-section" id='about' style={{ width: "100%" }}>
-                <h2 ref={titleRef} className="" style={{ fontSize: "40px", textAlign: "center", color: "white",marginLeft:"450px" }}>About Us</h2>
+            <div className="info-section w-full px-4 md:px-10" id='about'>
+                <h2 ref={titleRef} className="text-3xl md:text-5xl text-center text-white font-bold mb-10 w-full">About Us</h2>
 
                 <section ref={metricsRef} className="metrics fade">
                     <div className="metric-item">

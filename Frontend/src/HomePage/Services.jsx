@@ -75,8 +75,8 @@ const Services = () => {
 
   return (
     <div id="services" className="services-container">
-      <div className="services-wrapper">
-      <h2 ref={titleRef} className="services-title" style={{marginLeft:"500px"}}>Our Services</h2>
+      <div className="services-wrapper w-full px-4 mx-auto overflow-hidden">
+      <h2 ref={titleRef} className="text-3xl md:text-5xl text-center font-bold text-white mb-10 w-full">Our Services</h2>
 
 
         <div className="slider-container">
