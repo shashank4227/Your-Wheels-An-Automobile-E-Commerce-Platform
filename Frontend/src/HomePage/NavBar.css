@@ -4,6 +4,36 @@
     
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
+.navbar{
+    display: flex;
+    justify-content:space-around;
+    align-items: center;
+    background-color:black;
+    height:100px;
+}
+.navbar-logo img{
+    height: 50px;
+}
+.navbar-links{
+    display: flex;
+    justify-content: space-between;
+    width: 20%;
+}
+.navbar-links a,.navbar-links button{
+    text-decoration: none;
+    color:rgb(150, 150, 150);
+    /* font-weight: bold; */
+
+}
+.navbar-links button{
+    background-color:black;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.navbar-links a:hover,.navbar-links button:hover{
+    color: white;
+}
 .navbar-buttons .signup-btn {
     border: 1px solid white;
     border-radius: 5px;

@@ -6,12 +6,12 @@ function Footer() {
   return (
     <div className="footer-container">
       {/* Footer */}
-      <footer className="footer bg-[#0b0b0b] text-[#d1d5db] py-5 relative w-full">
+      <footer className="footer">
         {/* Upper footer section */}
-        <div className="footer-top flex flex-col md:flex-row justify-between items-start p-6 gap-10 md:px-20 lg:px-40">
+        <div className="footer-top">
           {/* Left half: About section */}
-          <div className="footer-left w-full md:w-1/2 md:mr-10">
-            <div className="footer-logo mb-3">
+          <div className="footer-left">
+            <div className="footer-logo">
               <h2 style={{color:"white"}}>Your Wheels</h2>
             </div>
             <p>
@@ -23,9 +23,9 @@ function Footer() {
           </div>
 
           {/* Right half: Contact section */}
-          <div className="footer-right w-full md:w-1/2">
-            <h3 className="text-xl font-semibold mb-3">Contact Us</h3>
-            <div className="footer-links mt-3 space-y-3">
+          <div className="footer-right">
+            <h3>Contact Us</h3>
+            <div className="footer-links">
               <a href="mailto:yourwheels@gmail.com" className="footer-link">
                 <Mail className="icon" />
                 <span>yourwheels123@gmail.com</span>

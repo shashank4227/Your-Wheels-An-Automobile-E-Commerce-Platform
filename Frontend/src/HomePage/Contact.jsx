@@ -38,8 +38,8 @@ function Contact() {
     <div id="contact" className="contact-page">
       <div className="contact-container">
         {/* Contact Title with Fade-in */}
-        <h1 ref={titleRef} className="text-3xl md:text-5xl text-center font-bold text-white mb-4">Get in Touch</h1>
-        <p className="subtitle px-4">Need help finding the perfect vehicle? We're here to assist you.</p>
+        <h1 ref={titleRef} className="services-title">Get in Touch</h1>
+        <p className="subtitle">Need help finding the perfect vehicle? We're here to assist you.</p>
 
         <div className="contact-grid">
           {[
