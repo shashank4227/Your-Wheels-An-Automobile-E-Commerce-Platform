@@ -5,7 +5,7 @@ const swaggerUi = require("swagger-ui-express");
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
 
 const options = {
-  definition: {
+  swaggerDefinition: {
     openapi: "3.0.0",
     info: {
       title: "YourWheels API Documentation",
